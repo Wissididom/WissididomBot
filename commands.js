@@ -1,13 +1,13 @@
 const fs = require("fs");
 const path = require("path");
+const { Database } = require("./database/mariadb");
 
-function getCustomCommandNameFromMessage(msg) {
+async function getCustomCommandNameFromMessage(msg) {
   return null;
 }
 
-function getCommandNameFromMessage(msg) {
-  // TODO: Get Prefix from Database
-  const prefix = "!";
+async function getCommandNameFromMessage(msg) {
+  const prefix = (await Database.getSettings()).prefix ?? "!";
   let msgCommandName = msg.content.substring(prefix.length);
   if (msgCommandName.includes(" "))
     msgCommandName = msgCommandName.substring(0, msgCommandName.indexOf(" "));
