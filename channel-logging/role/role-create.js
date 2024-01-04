@@ -1,11 +1,11 @@
-const { Role } = require('discord.js');
+const { Role } = require("discord.js");
 
 /**
  * Emitted whenever a role is created.
  * @param {Role} role The role that was created
  */
 async function roleCreate(role) {
-    // TODO
+  // TODO
 }
 
 module.exports.roleCreate = roleCreate;

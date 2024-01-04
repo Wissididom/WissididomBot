@@ -1,4 +1,4 @@
-const { GuildScheduledEvent, User } = require('discord.js');
+const { GuildScheduledEvent, User } = require("discord.js");
 
 /**
  * Emitted whenever a user unsubscribes from a guild scheduled event.
@@ -6,7 +6,7 @@ const { GuildScheduledEvent, User } = require('discord.js');
  * @param {User} user The user who unsubscribed
  */
 async function guildScheduledEventUserRemove(guildScheduledEvent, user) {
-    // TODO
+  // TODO
 }
 
 module.exports.guildScheduledEventUserRemove = guildScheduledEventUserRemove;

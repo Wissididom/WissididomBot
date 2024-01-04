@@ -1,11 +1,11 @@
-const { GuildEmoji } = require('discord.js');
+const { GuildEmoji } = require("discord.js");
 
 /**
  * Emitted whenever a custom emoji is deleted in a guild.
  * @param {GuildEmoji} emoji The emoji that was deleted
  */
 async function emojiDelete(emoji) {
-    // TODO
+  // TODO
 }
 
 module.exports.emojiDelete = emojiDelete;

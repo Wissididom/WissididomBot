@@ -1,4 +1,9 @@
-const { Collection, GuildTextBasedChannel, Message, Snowflake } = require('discord.js');
+const {
+  Collection,
+  GuildTextBasedChannel,
+  Message,
+  Snowflake,
+} = require("discord.js");
 
 /**
  * Emitted whenever messages are deleted in bulk.
@@ -6,7 +11,7 @@ const { Collection, GuildTextBasedChannel, Message, Snowflake } = require('disco
  * @param {GuildTextBasedChannel} channel The channel that the messages were deleted in
  */
 async function messageDeleteBulk(messages, channel) {
-    // TODO
+  // TODO
 }
 
 module.exports.messageDeleteBulk = messageDeleteBulk;

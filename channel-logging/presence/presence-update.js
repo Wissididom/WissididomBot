@@ -1,4 +1,4 @@
-const { Presence } = require('discord.js');
+const { Presence } = require("discord.js");
 
 /**
  * Emitted whenever a guild members presence (e.g. status, activity) is changed.
@@ -6,7 +6,7 @@ const { Presence } = require('discord.js');
  * @param {Presence} newPresence The presence after the update
  */
 async function presenceUpdate(oldPresence, newPresence) {
-    // TODO
+  // TODO
 }
 
 module.exports.presenceUpdate = presenceUpdate;

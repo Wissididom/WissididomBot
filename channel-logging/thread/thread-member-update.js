@@ -1,4 +1,4 @@
-const { ThreadMember } = require('discord.js');
+const { ThreadMember } = require("discord.js");
 
 /**
  * Emitted whenever the client user's thread member is updated.
@@ -6,7 +6,7 @@ const { ThreadMember } = require('discord.js');
  * @param {ThreadMember} newMember The member after the update
  */
 async function threadMemberUpdate(oldMember, newMember) {
-    // TODO
+  // TODO
 }
 
 module.exports.threadMemberUpdate = threadMemberUpdate;

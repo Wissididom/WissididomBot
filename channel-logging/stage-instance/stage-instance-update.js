@@ -1,4 +1,4 @@
-const { StageInstance } = require('discord.js');
+const { StageInstance } = require("discord.js");
 
 /**
  * Emitted whenever a stage instance gets updated - e.g. change in topic or privacy level.
@@ -6,7 +6,7 @@ const { StageInstance } = require('discord.js');
  * @param {StageInstance} newStageInstance The stage instance after the update
  */
 async function stageInstanceUpdate(oldStageInstance, newStageInstance) {
-    // TODO
+  // TODO
 }
 
 module.exports.stageInstanceUpdate = stageInstanceUpdate;

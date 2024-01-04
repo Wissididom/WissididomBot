@@ -1,4 +1,4 @@
-const { ThreadChannel } = require('discord.js');
+const { ThreadChannel } = require("discord.js");
 
 /**
  * Emitted whenever a thread is updated - e.g. name change, archive state change, locked state change.
@@ -6,7 +6,7 @@ const { ThreadChannel } = require('discord.js');
  * @param {ThreadChannel} newThread The thread after the update
  */
 async function threadUpdate(oldThread, newThread) {
-    // TODO
+  // TODO
 }
 
 module.exports.threadUpdate = threadUpdate;

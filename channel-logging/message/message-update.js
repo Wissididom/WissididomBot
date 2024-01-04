@@ -1,4 +1,4 @@
-const { Message } = require('discord.js');
+const { Message } = require("discord.js");
 
 /**
  * Emitted whenever a message is updated - e.g. embed or content change.
@@ -6,7 +6,7 @@ const { Message } = require('discord.js');
  * @param {Message} newMessage The message after the update
  */
 async function messageUpdate(message) {
-    // TODO
+  // TODO
 }
 
 module.exports.messageUpdate = messageUpdate;

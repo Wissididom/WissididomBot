@@ -1,4 +1,4 @@
-const { Guild } = require('discord.js');
+const { Guild } = require("discord.js");
 
 /**
  * Emitted whenever a guild is updated - e.g. name change.
@@ -6,7 +6,7 @@ const { Guild } = require('discord.js');
  * @param {Guild} newGuild The guild after the update
  */
 async function guildUpdate(oldGuild, newGuild) {
-    // TODO
+  // TODO
 }
 
 module.exports.guildUpdate = guildUpdate;

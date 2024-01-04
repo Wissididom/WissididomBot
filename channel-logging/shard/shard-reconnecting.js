@@ -3,7 +3,7 @@
  * @param {number} id The shard id that is attempting to reconnect
  */
 async function shardReconnecting(id) {
-    // TODO
+  // TODO
 }
 
 module.exports.shardReconnecting = shardReconnecting;

@@ -1,4 +1,4 @@
-const { ThreadChannel } = require('discord.js');
+const { ThreadChannel } = require("discord.js");
 
 /**
  * Emitted whenever a thread is created or when the client user is added to a thread.
@@ -6,7 +6,7 @@ const { ThreadChannel } = require('discord.js');
  * @param {boolean} newlyCreated Whether the thread was newly created
  */
 async function threadCreate(thread, newlyCreated) {
-    // TODO
+  // TODO
 }
 
 module.exports.threadCreate = threadCreate;

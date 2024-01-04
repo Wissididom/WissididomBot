@@ -1,4 +1,4 @@
-const { GuildAuditLogsEntry, Guild } = require('discord.js');
+const { GuildAuditLogsEntry, Guild } = require("discord.js");
 
 /**
  * Emitted whenever a guild audit log entry is created.
@@ -6,7 +6,7 @@ const { GuildAuditLogsEntry, Guild } = require('discord.js');
  * @param {Guild} guild The guild where the entry was created
  */
 async function guildAuditLogEntryCreate(auditLogEntry, guild) {
-    // TODO
+  // TODO
 }
 
 module.exports.guildAuditLogEntryCreate = guildAuditLogEntryCreate;

@@ -1,4 +1,4 @@
-const { GuildEmoji } = require('discord.js');
+const { GuildEmoji } = require("discord.js");
 
 /**
  * Emitted whenever a custom emoji is updated in a guild.
@@ -6,7 +6,7 @@ const { GuildEmoji } = require('discord.js');
  * @param {GuildEmoji} newEmoji The new emoji
  */
 async function emojiUpdate(emoji) {
-    // TODO
+  // TODO
 }
 
 module.exports.emojiUpdate = emojiUpdate;

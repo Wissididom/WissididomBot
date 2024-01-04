@@ -1,4 +1,4 @@
-const { Role } = require('discord.js');
+const { Role } = require("discord.js");
 
 /**
  * Emitted whenever a guild role is updated.
@@ -6,7 +6,7 @@ const { Role } = require('discord.js');
  * @param {Role} newRole The role after the update
  */
 async function roleUpdate(oldRole, newRole) {
-    // TODO
+  // TODO
 }
 
 module.exports.roleUpdate = roleUpdate;

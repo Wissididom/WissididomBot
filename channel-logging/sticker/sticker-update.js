@@ -1,4 +1,4 @@
-const { Sticker } = require('discord.js');
+const { Sticker } = require("discord.js");
 
 /**
  * Emitted whenever a custom sticker is updated in a guild.
@@ -6,7 +6,7 @@ const { Sticker } = require('discord.js');
  * @param {Sticker} newSticker The new sticker
  */
 async function stickerUpdate(oldSticker, newSticker) {
-    // TODO
+  // TODO
 }
 
 module.exports.stickerUpdate = stickerUpdate;
