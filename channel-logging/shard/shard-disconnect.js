@@ -4,7 +4,7 @@
  * @param {number} id The shard id that disconnected
  */
 async function shardDisconnect(event, id) {
-    // TODO
+  // TODO
 }
 
 module.exports.shardDisconnect = shardDisconnect;

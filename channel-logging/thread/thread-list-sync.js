@@ -1,4 +1,4 @@
-const { Collection, Guild, Snowflake, ThreadChannel } = require('discord.js');
+const { Collection, Guild, Snowflake, ThreadChannel } = require("discord.js");
 
 /**
  * Emitted whenever the client user gains access to a text or news channel that contains threads
@@ -6,7 +6,7 @@ const { Collection, Guild, Snowflake, ThreadChannel } = require('discord.js');
  * @param {Guild} guild The guild that the threads were synced in
  */
 async function threadListSync(threads, guild) {
-    // TODO
+  // TODO
 }
 
 module.exports.threadListSync = threadListSync;

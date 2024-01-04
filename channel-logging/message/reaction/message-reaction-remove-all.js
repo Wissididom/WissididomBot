@@ -1,4 +1,9 @@
-const { Collection, Message, MessageReaction, Snowflake } = require('discord.js');
+const {
+  Collection,
+  Message,
+  MessageReaction,
+  Snowflake,
+} = require("discord.js");
 
 /**
  * Emitted whenever all reactions are removed from a cached message.
@@ -6,7 +11,7 @@ const { Collection, Message, MessageReaction, Snowflake } = require('discord.js'
  * @param {Collection<(string | Snowflake), MessageReaction>} reactions The cached message reactions that were removed
  */
 async function messageReactionRemoveAll(messageReaction, user) {
-    // TODO
+  // TODO
 }
 
 module.exports.messageReactionRemoveAll = messageReactionRemoveAll;

@@ -1,4 +1,4 @@
-const { MessageReaction, User } = require('discord.js');
+const { MessageReaction, User } = require("discord.js");
 
 /**
  * Emitted whenever a reaction is added to a cached message.
@@ -6,7 +6,7 @@ const { MessageReaction, User } = require('discord.js');
  * @param {User} user The user that applied the guild or reaction emoji
  */
 async function messageReactionAdd(messageReaction, user) {
-    // TODO
+  // TODO
 }
 
 module.exports.messageReactionAdd = messageReactionAdd;

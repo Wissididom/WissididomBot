@@ -1,4 +1,4 @@
-const { Snowflake } = require('discord.js');
+const { Snowflake } = require("discord.js");
 
 /**
  * Emitted when a shard turns ready.
@@ -6,7 +6,7 @@ const { Snowflake } = require('discord.js');
  * @param {?Set<Snowflake>} unavailableGuilds Set of unavailable guild ids, if any
  */
 async function shardReady(id, unavailableGuilds) {
-    // TODO
+  // TODO
 }
 
 module.exports.shardReady = shardReady;

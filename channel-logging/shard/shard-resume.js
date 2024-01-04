@@ -4,7 +4,7 @@
  * @param {number} replayedEvents The amount of replayed events
  */
 async function shardResume(id, replayedEvents) {
-    // TODO
+  // TODO
 }
 
 module.exports.shardResume = shardResume;

@@ -1,4 +1,4 @@
-const { Entitlement } = require('discord.js');
+const { Entitlement } = require("discord.js");
 
 /**
  * Emitted whenever an entitlement is updated - i.e. when a user's subscription renews.
@@ -6,7 +6,7 @@ const { Entitlement } = require('discord.js');
  * @param {Entitlement} newEntitlement The entitlement after the update
  */
 async function entitlementUpdate(oldEntitlement, newEntitlement) {
-    // TODO
+  // TODO
 }
 
 module.exports.entitlementUpdate = entitlementUpdate;

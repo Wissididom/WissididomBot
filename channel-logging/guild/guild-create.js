@@ -1,11 +1,11 @@
-const { Guild } = require('discord.js');
+const { Guild } = require("discord.js");
 
 /**
  * Emitted whenever the client joins a guild.
  * @param {Guild} guild The created guild
  */
 async function guildCreate(guild) {
-    // TODO
+  // TODO
 }
 
 module.exports.guildCreate = guildCreate;

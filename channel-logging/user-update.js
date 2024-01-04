@@ -1,4 +1,4 @@
-const { User } = require('discord.js');
+const { User } = require("discord.js");
 
 /**
  * Emitted whenever a user's details (e.g. username) are changed. Triggered by the Discord gateway events Events.UserUpdate, Events.GuildMemberUpdate, and Events.PresenceUpdate.
@@ -6,7 +6,7 @@ const { User } = require('discord.js');
  * @param {User} newUser The user after the update
  */
 async function userUpdate(oldUser, newUser) {
-    // TODO
+  // TODO
 }
 
 module.exports.userUpdate = userUpdate;

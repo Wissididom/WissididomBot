@@ -1,11 +1,11 @@
-const { MessageReaction } = require('discord.js');
+const { MessageReaction } = require("discord.js");
 
 /**
  * Emitted when a bot removes an emoji reaction from a cached message.
  * @param {MessageReaction} reaction The reaction that was removed
  */
 async function messageReactionRemoveEmoji(reaction) {
-    // TODO
+  // TODO
 }
 
 module.exports.messageReactionRemoveEmoji = messageReactionRemoveEmoji;
