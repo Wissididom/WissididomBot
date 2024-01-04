@@ -21,7 +21,7 @@ async function getCommandNameFromMessage(msg) {
 }
 
 function getCommandObject(commandName) {
-  console.log(require(`./commands/${commandName}.js`));
+  return require(`./commands/${commandName}.js`);
 }
 
 async function handleCommands(
