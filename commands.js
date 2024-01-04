@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const { Database } = require("./database/mariadb");
-const { SlashCommandBuilder } = require("discord.js");
 
 function getAvailableDefaultCommandNames() {
   let commands = [];
