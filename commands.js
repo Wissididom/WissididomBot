@@ -1,13 +1,23 @@
 const fs = require("fs");
 const path = require("path");
 const { Database } = require("./database/mariadb");
+const { SlashCommandBuilder } = require("discord.js");
 
-async function getCustomCommandNameFromMessage(msg) {
+function getAvailableDefaultCommandNames() {
+  let commands = [];
+  let commandFiles = fs.readdirSync("./commands/");
+  for (let commandFile of commandFiles) {
+    let name = path.parse(commandFile).name;
+    commands.push(name);
+  }
+  return commands;
+}
+
+async function getCustomCommandNameFromMessage(prefix, msg) {
   return null;
 }
 
-async function getCommandNameFromMessage(msg) {
-  const prefix = (await Database.getSettings()).prefix ?? "!";
+async function getCommandNameFromMessage(prefix, msg) {
   let msgCommandName = msg.content.substring(prefix.length);
   if (msgCommandName.includes(" "))
     msgCommandName = msgCommandName.substring(0, msgCommandName.indexOf(" "));
@@ -29,6 +39,7 @@ async function handleCommands(
   name,
   permissions,
   functionToRun,
+  prefix,
 ) {
   for (let permission of permissions) {
     if (
@@ -36,7 +47,8 @@ async function handleCommands(
         .permissionsFor(msgOrInteraction.member)
         .has(permission)
     ) {
-      return await functionToRun(msgOrInteraction);
+      if (prefix) return await functionToRun(prefix, msgOrInteraction);
+      else return await functionToRun(msgOrInteraction);
     }
   }
   return await msgOrInteraction.reply({
@@ -45,13 +57,14 @@ async function handleCommands(
 }
 
 async function handleMessageCommands(msg) {
-  const commandName = getCommandNameFromMessage(msg);
+  const prefix = (await Database.getSettings()).prefix ?? "!";
+  const commandName = getCommandNameFromMessage(prefix, msg);
   if (!commandName) {
     //return await msg.reply({content: `The command ${commandName} does not exist!`});
     return null;
   }
   const { name, permissions, runMessage } = getCommandObject(commandName);
-  return await handleCommands(msg, name, permissions, runMessage);
+  return await handleCommands(msg, name, permissions, runMessage, prefix);
 }
 
 async function handleApplicationCommands(interaction) {
@@ -61,5 +74,12 @@ async function handleApplicationCommands(interaction) {
   return await handleCommands(interaction, name, permissions, runInteraction);
 }
 
+async function getRegisterArray() {
+  return getAvailableDefaultCommandNames().forEach((commandName) => {
+    return getCommandObject(commandName).registerObject;
+  });
+}
+
 module.exports.handleMessageCommands = handleMessageCommands;
 module.exports.handleApplicationCommands = handleApplicationCommands;
+module.exports.getRegisterArray = getRegisterArray;
