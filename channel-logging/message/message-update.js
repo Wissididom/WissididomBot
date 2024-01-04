@@ -49,7 +49,6 @@ async function messageUpdate(oldMessage, newMessage) {
       }
     }
   }
-  // TODO: Log Message Update
 }
 
 module.exports.messageUpdate = messageUpdate;
