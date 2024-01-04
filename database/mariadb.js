@@ -4,6 +4,7 @@ class Database {
   #db = null;
 
   #Settings = class extends Model {};
+  #Logging = class extends Model {};
 
   constructor() {
     if (process.env.DATABASE_URL) {
@@ -41,6 +42,31 @@ class Database {
         timestamps: false,
       },
     );
+    this.#Logging.init(
+      {
+        serverId: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        event: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        sourceChannel: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        destinationChannel: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+      },
+      {
+        sequelize: this.#db,
+        modelName: "logging",
+        timestamps: false,
+      },
+    );
   }
 
   async getSettings(serverId) {
@@ -58,6 +84,56 @@ class Database {
     } else {
       return await this.#Settings.create(settings);
     }
+  }
+
+  async getLoggings(serverId) {
+    return await this.#Logging.findAll({
+      where: {
+        serverId,
+      },
+    });
+  }
+
+  async addLogging(serverId, logging) {
+    return await this.#Logging.create(
+      {
+        event: logging.event,
+        sourceChannel: logging.sourceChannel,
+        destinationChannel: logging.destinationChannel,
+      },
+      {
+        where: {
+          serverId,
+        },
+      },
+    );
+  }
+
+  async addLoggings(serverId, loggings) {
+    let result = [];
+    for (let logging of loggings) {
+      result.push(await this.addLogging(serverId, logging));
+    }
+    return result;
+  }
+
+  async removeLogging(serverId, logging) {
+    return await this.#Logging.destroy({
+      where: {
+        serverId,
+        event: logging.event,
+        sourceChannel: logging.sourceChannel,
+        destinationChannel: logging.destinationChannel,
+      },
+    });
+  }
+
+  async removeAllLoggings(serverId) {
+    return await this.#Logging.destroy({
+      where: {
+        serverId,
+      },
+    });
   }
 }
 
