@@ -25,7 +25,7 @@ async function messageUpdate(oldMessage, newMessage) {
           await destinationChannel.send({
             embeds: [
               new EmbedBuilder()
-                .setDescription(
+                .setTitle(
                   `Message Edited in <#${newMessage.channelId}> [Jump to Message](<${newMessage.url}>)`,
                 )
                 .addFields(
