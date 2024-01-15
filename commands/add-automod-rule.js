@@ -6,7 +6,7 @@ import {
   AutoModerationActionType,
   SlashCommandBuilder,
 } from "discord.js";
-import { getComplexArgsFromMessage } from "../util";
+import { getComplexArgsFromMessage } from "../util.js";
 
 module.exports = {
   name: "add-automod-rule",
