@@ -78,8 +78,8 @@ class Database {
   }
 
   async setSettings(serverId, settings) {
-    let settings = await this.getSettings(serverId);
-    if (settings) {
+    let oldSettings = await this.getSettings(serverId);
+    if (oldSettings) {
       return await this.#Settings.update(settings, { where: { serverId } });
     } else {
       return await this.#Settings.create(settings);
