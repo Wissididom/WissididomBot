@@ -1,12 +1,12 @@
-const {
+import {
   PermissionsBitField,
   AutoModerationRuleEventType,
   AutoModerationRuleTriggerType,
   AutoModerationRuleKeywordPresetType,
   AutoModerationActionType,
   SlashCommandBuilder,
-} = require("discord.js");
-const { getComplexArgsFromMessage } = require("../util");
+} from "discord.js";
+import { getComplexArgsFromMessage } from "../util";
 
 module.exports = {
   name: "add-automod-rule",

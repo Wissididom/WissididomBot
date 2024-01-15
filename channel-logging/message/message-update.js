@@ -1,12 +1,7 @@
-const { Message, EmbedBuilder } = require("discord.js");
-const { Database } = require("../../database/mariadb");
+import { EmbedBuilder } from "discord.js";
+import { Database } from "../../database/mariadb.js";
 
-/**
- * Emitted whenever a message is updated - e.g. embed or content change.
- * @param {Message} oldMessage The message before the update
- * @param {Message} newMessage The message after the update
- */
-async function messageUpdate(oldMessage, newMessage) {
+export async function messageUpdate(oldMessage, newMessage) {
   let serverId = newMessage.guildId;
   let loggings = await Database.getLoggings(serverId);
   let oldMessageContent = oldMessage.content;
@@ -50,5 +45,3 @@ async function messageUpdate(oldMessage, newMessage) {
     }
   }
 }
-
-module.exports.messageUpdate = messageUpdate;

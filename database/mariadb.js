@@ -1,6 +1,6 @@
-const { Sequelize, Model, DataTypes } = require("sequelize");
+import { Sequelize, Model, DataTypes } from "sequelize";
 
-class Database {
+export class Database {
   #db = null;
 
   #Settings = class extends Model {};
@@ -136,5 +136,3 @@ class Database {
     });
   }
 }
-
-module.exports.Database = Database;

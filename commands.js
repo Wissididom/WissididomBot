@@ -1,12 +1,12 @@
-const fs = require("fs");
-const path = require("path");
-const { Database } = require("./database/mariadb");
+import { readdirSync } from "fs";
+import { parse as parsePath } from "path";
+import { Database } from "./database/mariadb.js";
 
 function getAvailableDefaultCommandNames() {
   let commands = [];
-  let commandFiles = fs.readdirSync("./commands/");
+  let commandFiles = readdirSync("./commands/");
   for (let commandFile of commandFiles) {
-    let name = path.parse(commandFile).name;
+    let name = parsePath(commandFile).name;
     commands.push(name);
   }
   return commands;
@@ -21,9 +21,9 @@ async function getCommandNameFromMessage(prefix, msg) {
   if (msgCommandName.includes(" "))
     msgCommandName = msgCommandName.substring(0, msgCommandName.indexOf(" "));
   let commandName = null;
-  let commandFiles = fs.readdirSync("./commands/");
+  let commandFiles = readdirSync("./commands/");
   for (let commandFile of commandFiles) {
-    let name = path.parse(commandFile).name;
+    let name = parsePath(commandFile).name;
     if (msgCommandName == name) commandName = name;
   }
   return !commandName ? getCustomCommandNameFromMessage(msg) : commandName;
@@ -55,7 +55,7 @@ async function handleCommands(
   });
 }
 
-async function handleMessageCommands(msg) {
+export async function handleMessageCommands(msg) {
   const prefix = (await Database.getSettings()).prefix ?? "!";
   const commandName = getCommandNameFromMessage(prefix, msg);
   if (!commandName) {
@@ -66,19 +66,15 @@ async function handleMessageCommands(msg) {
   return await handleCommands(msg, name, permissions, runMessage, prefix);
 }
 
-async function handleApplicationCommands(interaction) {
+export async function handleApplicationCommands(interaction) {
   const { name, permissions, runInteraction } = getCommandObject(
     interaction.commandName,
   );
   return await handleCommands(interaction, name, permissions, runInteraction);
 }
 
-async function getRegisterArray() {
+export async function getRegisterArray() {
   return getAvailableDefaultCommandNames().forEach((commandName) => {
     return getCommandObject(commandName).registerObject;
   });
 }
-
-module.exports.handleMessageCommands = handleMessageCommands;
-module.exports.handleApplicationCommands = handleApplicationCommands;
-module.exports.getRegisterArray = getRegisterArray;

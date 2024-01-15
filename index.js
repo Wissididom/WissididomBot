@@ -1,7 +1,8 @@
-require("dotenv").config();
+import * as DotEnv from "dotenv";
+DotEnv.config();
 
-const { Client, Events, GatewayIntentBits, Partials } = require("discord.js");
-const {
+import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
+import {
   applicationCommandPermissionsUpdate,
   autoModerationActionExecuted,
   autoModerationRuleCreate,
@@ -69,12 +70,12 @@ const {
   userUpdate,
   voiceStateUpdate,
   webhooksUpdate,
-} = require("./channel-logging");
-const { moderateBot, moderateUser } = require("./moderation");
-const {
+} from "./channel-logging.js";
+import { moderateBot, moderateUser } from "./moderation.js";
+import {
   handleMessageCommands,
   handleApplicationCommands,
-} = require("./commands");
+} from "./commands.js";
 
 const client = new Client({
   intents: [
