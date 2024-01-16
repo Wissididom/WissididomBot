@@ -1,7 +1,8 @@
-require("dotenv").config();
+import * as DotEnv from "dotenv";
+DotEnv.config();
 
-const { REST, Routes } = require("discord.js");
-const { getRegisterArray } = require("./commands");
+import { REST, Routes } from "discord.js";
+import { getRegisterArray } from "./commands.js";
 
 const token = process.env.DISCORD_TOKEN;
 
@@ -13,7 +14,7 @@ if (!token) {
 
 const rest = new REST().setToken(token);
 
-const registerArray = getRegisterArray();
+const registerArray = await getRegisterArray();
 
 (async () => {
   try {

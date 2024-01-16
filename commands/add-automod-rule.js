@@ -8,7 +8,7 @@ import {
 } from "discord.js";
 import { getComplexArgsFromMessage } from "../util.js";
 
-module.exports = {
+export default {
   name: "add-automod-rule",
   description: "Adds an automod rule to the current server",
   permissions: [
@@ -78,7 +78,7 @@ module.exports = {
     )
     .addBooleanOption((option) =>
       option
-        .setName("mentiontotallimitraidprotectionenabled")
+        .setName("mentionraidprotectionenabled")
         .setDescription("Whether to automatically detect mention raids"),
     ),
   runMessage: async (prefix, msg) => {

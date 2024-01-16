@@ -29,8 +29,8 @@ async function getCommandNameFromMessage(prefix, msg) {
   return !commandName ? getCustomCommandNameFromMessage(msg) : commandName;
 }
 
-function getCommandObject(commandName) {
-  return require(`./commands/${commandName}.js`);
+async function getCommandObject(commandName) {
+  return await import(`./commands/${commandName}.js`, { encoding: 'utf-8' });
 }
 
 async function handleCommands(
@@ -74,7 +74,11 @@ export async function handleApplicationCommands(interaction) {
 }
 
 export async function getRegisterArray() {
-  return getAvailableDefaultCommandNames().forEach((commandName) => {
-    return getCommandObject(commandName).registerObject;
-  });
+  let defaultCommandNames = getAvailableDefaultCommandNames();
+  let registerArray = [];
+  for (let i = 0; i < defaultCommandNames.length; i++) {
+    let { default: commandObject } = await getCommandObject(defaultCommandNames[i]);
+    registerArray.push(commandObject.registerObject);
+  }
+  return registerArray;
 }
