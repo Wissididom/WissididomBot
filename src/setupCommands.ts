@@ -1,8 +1,8 @@
 import * as DotEnv from "dotenv";
 DotEnv.config();
 
-import { REST, Routes } from "discord.js";
-import { getRegisterArray } from "./commands.js";
+import { REST, Routes, Snowflake } from "discord.js";
+import { getRegisterArray } from "./commands";
 
 const token = process.env.DISCORD_TOKEN;
 
@@ -14,16 +14,15 @@ if (!token) {
 
 const rest = new REST().setToken(token);
 
-const registerArray = await getRegisterArray();
-
 (async () => {
+  const registerArray = await getRegisterArray();
   try {
     console.log(
       `Started refreshing ${registerArray.length} application (/) commands.`,
     );
-    const userData = await rest.get(Routes.user());
-    const userId = userData.id;
-    const data = await rest.put(Routes.applicationCommands(userId), {
+    const userData: any = await rest.get(Routes.user());
+    const userId: Snowflake = userData.id;
+    const data: any = await rest.put(Routes.applicationCommands(userId), {
       body: registerArray,
     });
     console.log(

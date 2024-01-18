@@ -15,9 +15,9 @@ import {
   emojiCreate,
   emojiDelete,
   emojiUpdate,
-  entitlementCreate,
-  entitlementDelete,
-  entitlementUpdate,
+  //entitlementCreate,
+  //entitlementDelete,
+  //entitlementUpdate,
   guildAuditLogEntryCreate,
   guildAvailable,
   guildUnavailable,
@@ -70,12 +70,9 @@ import {
   userUpdate,
   voiceStateUpdate,
   webhooksUpdate,
-} from "./channel-logging.js";
-import { moderateBot, moderateUser } from "./moderation.js";
-import {
-  handleMessageCommands,
-  handleApplicationCommands,
-} from "./commands.js";
+} from "./logging";
+import { moderateBot, moderateUser } from "./moderation";
+import { handleMessageCommands, handleApplicationCommands } from "./commands";
 
 const client = new Client({
   intents: [
@@ -109,7 +106,7 @@ const client = new Client({
 });
 
 client.on(Events.ClientReady, () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  console.log(`Logged in as ${client.user?.tag}!`);
 });
 
 client.on(Events.MessageCreate, async (msg) => {
@@ -142,9 +139,9 @@ client.on(Events.ChannelUpdate, channelUpdate);
 client.on(Events.GuildEmojiCreate, emojiCreate);
 client.on(Events.GuildEmojiDelete, emojiDelete);
 client.on(Events.GuildEmojiUpdate, emojiUpdate);
-client.on(Events.EntitlementCreate, entitlementCreate); // Event doesn't seem to exist yet
-client.on(Events.EntitlementDelete, entitlementDelete); // Event doesn't seem to exist yet
-client.on(Events.EntitlementUpdate, entitlementUpdate); // Event doesn't seem to exist yet
+//client.on(Events.EntitlementCreate, entitlementCreate); // Event doesn't seem to exist yet
+//client.on(Events.EntitlementDelete, entitlementDelete); // Event doesn't seem to exist yet
+//client.on(Events.EntitlementUpdate, entitlementUpdate); // Event doesn't seem to exist yet
 client.on(Events.GuildAuditLogEntryCreate, guildAuditLogEntryCreate);
 client.on(Events.GuildAvailable, guildAvailable);
 client.on(Events.GuildUnavailable, guildUnavailable);
