@@ -97,7 +97,7 @@ let exportObj = {
         getComplexArgsFromMessage(msg);
       if (!args) {
         await msg.reply({
-          content: "You must specify a args for this command!",
+          content: "You must specify args for this command!",
         });
         return;
       }
@@ -225,14 +225,16 @@ let exportObj = {
         exemptChannels,
         reason,
       });
+      // TODO: Write success or failure message
     }
   },
   runInteraction: async (interaction: Interaction) => {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
+      await interaction.deferReply({ ephemeral: true });
       let autoModerationRuleManager = interaction.guild.autoModerationRules;
       let name = interaction.options.getString("name");
       if (!name) {
-        await interaction.reply({
+        await interaction.editReply({
           content: `You must specify a name for the AutoMod Rule! You specified: ${name}`,
         });
         return;
@@ -245,7 +247,7 @@ let exportObj = {
           eventType = AutoModerationRuleEventType.MessageSend;
           break;
         default:
-          await interaction.reply({
+          await interaction.editReply({
             content: `The given event type (${eventTypeStr}) does not exist! Please use \`MessageSend\`!`,
           });
           return;
@@ -267,35 +269,35 @@ let exportObj = {
           triggerType = AutoModerationRuleTriggerType.Spam;
           break;
         default:
-          await interaction.reply({
+          await interaction.editReply({
             content: `The given trigger type (${triggerTypeStr}) does not exist! Please use either \`Keyword\`, \`KeywordPreset\`, \`MentionSpam\` or \`Spam\``,
           });
           return;
       }
       let keywordFilter = interaction.options.getString("keywordfilter");
       if (!keywordFilter) {
-        await interaction.reply({
+        await interaction.editReply({
           content: "You must specify keyword filters for the AutoMod Rule!",
         });
         return;
       }
       let regexPatterns = interaction.options.getString("regexpatterns");
       if (!regexPatterns) {
-        await interaction.reply({
+        await interaction.editReply({
           content: "You must specify regex patterns for the AutoMod Rule!",
         });
         return;
       }
       let presets = interaction.options.getString("presets");
       if (!presets) {
-        await interaction.reply({
+        await interaction.editReply({
           content: "You must specify presets for the AutoMod Rule!",
         });
         return;
       }
       let allowList = interaction.options.getString("allowlist");
       if (!allowList) {
-        await interaction.reply({
+        await interaction.editReply({
           content: "You must specify an allow list for the AutoMod Rule!",
         });
         return;
@@ -325,7 +327,7 @@ let exportObj = {
       };
       let actionsStr = interaction.options.getString("actions");
       if (!actionsStr) {
-        await interaction.reply({
+        await interaction.editReply({
           content: `You must specify actions for this AutoMod Rule! You've specified ${actionsStr}`,
         });
         return;
@@ -383,6 +385,7 @@ let exportObj = {
         exemptChannels,
         reason,
       });
+      // TODO: Write success or failure message
     }
   },
 };

@@ -1,5 +1,3 @@
-import { readdirSync } from "fs";
-import { parse as parsePath } from "path";
 import {
   AutocompleteInteraction,
   GuildMember,
@@ -10,15 +8,10 @@ import {
   TextChannel,
 } from "discord.js";
 import Database from "./database/mariadb";
+import * as Commands from "./commands/index";
 
 function getAvailableDefaultCommandNames() {
-  let commands: string[] = [];
-  let commandFiles: string[] = readdirSync("./commands/");
-  for (let commandFile of commandFiles) {
-    let name: string = parsePath(commandFile).name;
-    commands.push(name);
-  }
-  return commands;
+  return ["add-automod-rule", "add-logging-event"];
 }
 
 async function getCustomCommandNameFromMessage(prefix: string, msg: Message) {
@@ -26,29 +19,33 @@ async function getCustomCommandNameFromMessage(prefix: string, msg: Message) {
 }
 
 async function getCommandNameFromMessage(prefix: string, msg: Message) {
-  let msgCommandName: string = msg.content.substring(prefix.length);
-  if (msgCommandName.includes(" "))
-    msgCommandName = msgCommandName.substring(0, msgCommandName.indexOf(" "));
-  let commandName: string | null = null;
-  let commandFiles: string[] = readdirSync("./commands/");
-  for (let commandFile of commandFiles) {
-    let name: string = parsePath(commandFile).name;
-    if (msgCommandName == name) commandName = name;
-  }
+  let commandName: string = msg.content.substring(prefix.length);
+  if (commandName.includes(" "))
+    commandName = commandName.substring(0, commandName.indexOf(" "));
   return !commandName
     ? getCustomCommandNameFromMessage(prefix, msg)
     : commandName;
 }
 
-async function getCommandObject(commandName: string): Promise<{
+function getCommandObject(commandName: string): {
   name: string;
   description: string;
-  permissions: BigInt[];
-  registerObject: () => SlashCommandBuilder;
+  permissions: bigint[];
+  registerObject: () => Omit<
+    SlashCommandBuilder,
+    "addSubcommand" | "addSubcommandGroup"
+  >;
   runMessage: (prefix: string, msg: Message) => Promise<void>;
   runInteraction: (interaction: Interaction) => Promise<void>;
-}> {
-  return await import(`./commands/${commandName}.js`);
+} | null {
+  switch (commandName) {
+    case "add-automod-rule":
+      return Commands.addAutoModRule;
+    case "add-logging-event":
+      return Commands.addLoggingEvent;
+    default:
+      return null;
+  }
 }
 
 async function handleCommands(
@@ -96,40 +93,52 @@ export async function handleMessageCommands(msg: Message) {
     msg,
   );
   if (!commandName) {
-    //return await msg.reply({content: `The command ${commandName} does not exist!`});
-    return null;
+    return null; // Command does not exist
   }
-  const { name, permissions, runMessage } = await getCommandObject(commandName);
-  return await handleCommands(msg, name, permissions, runMessage, prefix);
+  let commandObject = getCommandObject(commandName);
+  if (!commandObject) return null;
+  return await handleCommands(
+    msg,
+    commandObject.name,
+    commandObject.permissions,
+    commandObject.runMessage,
+    prefix,
+  );
 }
 
 export async function handleApplicationCommands(interaction: Interaction) {
   if (interaction.isCommand()) {
-    const { name, permissions, runInteraction } = await getCommandObject(
-      interaction.commandName,
-    );
+    let commandObject = getCommandObject(interaction.commandName);
+    if (!commandObject) {
+      let customCommandObject = null;
+      if (!customCommandObject) {
+        return await interaction.reply({
+          content: "Command does not exist!",
+        });
+      } else {
+        // TODO: Handle Custom Commands and overwrite commandObject variable
+        return null;
+      }
+    }
     return await handleCommands(
       interaction,
-      name,
-      permissions,
-      runInteraction,
+      commandObject.name,
+      commandObject.permissions,
+      commandObject.runInteraction,
       null,
     );
   }
 }
 
-export async function getRegisterArray() {
+export function getRegisterArray() {
   let defaultCommandNames: string[] = getAvailableDefaultCommandNames();
-  let registerArray: SlashCommandBuilder[] = [];
+  let registerArray: Omit<
+    SlashCommandBuilder,
+    "addSubcommand" | "addSubcommandGroup"
+  >[] = [];
   for (let i = 0; i < defaultCommandNames.length; i++) {
-    let commandObject: {
-      name: string;
-      description: string;
-      permissions: BigInt[];
-      registerObject: () => SlashCommandBuilder;
-      runMessage: (prefix: string, msg: Message) => Promise<void>;
-      runInteraction: (interaction: Interaction) => Promise<void>;
-    } = await getCommandObject(defaultCommandNames[i]);
+    let commandObject = getCommandObject(defaultCommandNames[i]);
+    if (!commandObject) continue;
     registerArray.push(commandObject.registerObject());
   }
   return registerArray;

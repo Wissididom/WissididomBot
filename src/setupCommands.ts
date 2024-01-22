@@ -15,7 +15,7 @@ if (!token) {
 const rest = new REST().setToken(token);
 
 (async () => {
-  const registerArray = await getRegisterArray();
+  const registerArray = getRegisterArray();
   try {
     console.log(
       `Started refreshing ${registerArray.length} application (/) commands.`,
