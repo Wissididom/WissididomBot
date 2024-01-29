@@ -55,7 +55,7 @@ export default new (class Database {
         },
         sourceChannel: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
         },
         destinationChannel: {
           type: DataTypes.STRING,
@@ -114,7 +114,7 @@ export default new (class Database {
   public async addLogging(logging: {
     serverId: Snowflake;
     event: string;
-    sourceChannel: Snowflake;
+    sourceChannel: Snowflake | null;
     destinationChannel: Snowflake;
   }) {
     return await this.Logging.create({

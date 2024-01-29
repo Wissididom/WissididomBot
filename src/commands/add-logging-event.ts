@@ -4,8 +4,10 @@ import {
   Message,
   Interaction,
   ChannelType,
+  EmbedBuilder,
 } from "discord.js";
 import { getComplexArgsFromMessage } from "../util";
+import Database from "../database/mariadb";
 
 let exportObj = {
   name: "add-logging-event",
@@ -119,8 +121,36 @@ let exportObj = {
         });
         return;
       }
-      let success = true; // TODO: Write to database
-      if (success) {
+      if (interaction.guildId && destinationChannel) {
+        let currentLoggings = await Database.getLoggings(interaction.guildId);
+        let alreadyExists = false;
+        for (let currentLogging of currentLoggings) {
+          if (
+            currentLogging.serverId == interaction.guildId &&
+            currentLogging.event == event &&
+            currentLogging.sourceChannel == sourceChannel?.id &&
+            currentLogging.destinationChannel == destinationChannel.id
+          ) {
+            alreadyExists = true;
+            break;
+          }
+        }
+        if (alreadyExists) {
+          await interaction.editReply({
+            embeds: [
+              new EmbedBuilder()
+                .setTitle("Failed to create logging connection")
+                .setDescription("This logging connection already exists!"),
+            ],
+          });
+        } else {
+          await Database.addLogging({
+            serverId: interaction.guildId,
+            event,
+            sourceChannel: sourceChannel?.id ?? null,
+            destinationChannel: destinationChannel.id,
+          });
+        }
         await interaction.editReply({
           content: "Successfully created or updated this logging connection!",
         });
