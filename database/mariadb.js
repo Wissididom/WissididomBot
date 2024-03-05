@@ -74,7 +74,7 @@ export default new (class Database {
         timezone: {
           type: DataTypes.STRING,
           allowNull: false,
-          defaultValue: 'Europe/London'
+          defaultValue: "Europe/London",
         },
       },
       {
