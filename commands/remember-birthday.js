@@ -54,6 +54,7 @@ let exportObj = {
         year,
         month,
         day,
+        timezone,
       );
       if (result) {
         await msg.reply({
@@ -94,6 +95,7 @@ let exportObj = {
         year,
         month,
         day,
+        timezone,
       );
       if (result) {
         await interaction.reply({
