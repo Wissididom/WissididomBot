@@ -71,6 +71,11 @@ export default new (class Database {
           min: 1,
           max: 31,
         },
+        timezone: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          defaultValue: 'Europe/London'
+        },
       },
       {
         sequelize: this.#db,
@@ -150,13 +155,14 @@ export default new (class Database {
     return result;
   }
 
-  async setBirthday(serverId, userId, year, month, day) {
+  async setBirthday(serverId, userId, year, month, day, timezone) {
     return await this.#Birthdays.upsert({
       serverId,
       userId,
       year,
       month,
       day,
+      timezone,
     });
   }
 })();
