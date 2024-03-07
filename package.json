@@ -18,11 +18,9 @@
     "@sequelize/core": "^7.0.0-alpha.37",
     "discord.js": "^14.14.1",
     "dotenv": "^16.4.5",
-    "mariadb": "^3.2.3",
-    "typescript": "^5.3.3"
+    "mariadb": "^3.2.3"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "ts-node": "^10.9.2"
+    "prettier": "^3.2.5"
   }
 }
