@@ -34,7 +34,7 @@ let exportObj = {
           return;
         }
       }
-      let birthday = db.getBirthday(msg.guildId, member);
+      let birthday = await db.getBirthday(msg.guildId, member);
       if (birthday) {
         await msg.reply({
           content: `<@${msg.author.id}>'s birthday is \`${birthday.year}-${birthday.month}-${birthday.day}\` (${birthday.timezone})!`,
@@ -52,7 +52,7 @@ let exportObj = {
       if (!member) {
         member = interaction.user.id;
       }
-      let birthday = db.getBirthday(
+      let birthday = await db.getBirthday(
         interaction.guildId,
         member instanceof User ? member.id : member,
       );
