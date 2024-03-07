@@ -36,6 +36,11 @@ export default new (class Database {
           allowNull: false,
           defaultValue: "!",
         },
+        timezone: {
+          type: DataTypes.STRING,
+          allowNull: false,
+          defaultValue: "Europe/London",
+        },
       },
       {
         sequelize: this.#db,
@@ -127,7 +132,7 @@ export default new (class Database {
   }
 
   async setPrefix(serverId, prefix) {
-    let oldPrefix = await this.getPrefix(settings.serverId);
+    let oldPrefix = await this.getPrefix(serverId);
     if (oldPrefix) {
       return await this.#Settings.update(
         {
@@ -141,6 +146,34 @@ export default new (class Database {
       return await this.#Settings.create({
         serverId,
         prefix,
+      });
+    }
+  }
+
+  async getTimezone(serverId) {
+    let result = await this.#Settings.findOne({
+      where: {
+        serverId,
+      },
+    });
+    return result?.timezone ?? "Europe/London";
+  }
+
+  async setTimezone(serverId, timezone) {
+    let oldTimezone = await this.getTimezone(serverId);
+    if (oldTimezone) {
+      return await this.#Settings.update(
+        {
+          timezone,
+        },
+        {
+          where: { serverId },
+        },
+      );
+    } else {
+      return await this.#Settings.create({
+        serverId,
+        timezone,
       });
     }
   }

@@ -1,12 +1,5 @@
 import { readdirSync } from "fs";
 import { parse as parsePath } from "path";
-import {
-  AutocompleteInteraction,
-  GuildMember,
-  Message,
-  SlashCommandBuilder,
-  TextChannel,
-} from "discord.js";
 import Database from "./database/mariadb.js";
 
 import RememberBirthday from "./commands/remember-birthday.js";
@@ -107,6 +100,10 @@ export async function handleApplicationCommands(interaction) {
       null,
       Database,
     );
+  }
+  if (interaction.isAutocomplete()) {
+    const { runAutocomplete } = await getCommandObject(interaction.commandName);
+    return runAutocomplete(interaction, Database);
   }
 }
 

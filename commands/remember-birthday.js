@@ -1,5 +1,7 @@
-import { PermissionsBitField, SlashCommandBuilder, Message } from "discord.js";
+import { SlashCommandBuilder } from "discord.js";
 import { getArgsFromMessage } from "../util.js";
+
+const SUPPORTED_TIMEZONES = Intl.supportedValuesOf("timeZone");
 
 let exportObj = {
   name: "remember-birthday",
@@ -29,6 +31,7 @@ let exportObj = {
       let args = getArgsFromMessage(msg);
       let birthdate = args[0];
       let timezone = args[1];
+      if (!timezone) timezone = await db.getTimezone(msg.guildId);
       if (!birthdate) {
         await msg.reply({
           content:
@@ -71,6 +74,7 @@ let exportObj = {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
       let birthdate = interaction.options.getString("date");
       let timezone = interaction.options.getString("timezone");
+      if (!timezone) timezone = await db.getTimezone(interaction.guildId);
       if (!birthdate) {
         await interaction.reply({
           content: `You must specify a birthday! Format: \`YYYY-MM-DD\` (year optional)`,
@@ -106,6 +110,30 @@ let exportObj = {
           content: `Failed to save <@${interaction.user.id}>'s birthday of \`${birthdate}\`!`,
         });
       }
+    }
+  },
+  runAutocomplete: async (interaction, db) => {
+    if (interaction.guild?.available && interaction.isAutocomplete()) {
+      let timezoneResponse = SUPPORTED_TIMEZONES.filter((zone) => {
+        return (
+          zone
+            .toLowerCase()
+            .indexOf(
+              interaction.options.getFocused().replace(" ", "_").toLowerCase(),
+            ) >= 0
+        );
+      });
+      timezoneResponse.length = Math.min(timezoneResponse.length, 25); // send max. 25 choices
+      await interaction
+        .respond(
+          timezoneResponse.map((zone) => {
+            return {
+              name: zone,
+              value: zone,
+            };
+          }),
+        )
+        .catch((err) => console.error(JSON.stringify(err)));
     }
   },
 };
