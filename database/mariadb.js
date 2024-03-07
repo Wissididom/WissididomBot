@@ -177,13 +177,24 @@ export default new (class Database {
   }
 
   async getBirthday(serverId, userId) {
-    let result = await this.#Birthdays.findOne({
+    return await this.#Birthdays.findOne({
       where: {
         serverId,
         userId,
       },
     });
-    return result;
+  }
+
+  async getBirthdays(serverId = null) {
+    if (serverId) {
+      return await this.#Birthdays.findAll({
+        where: {
+          serverId,
+        },
+      });
+    } else {
+      return await this.#Birthdays.findAll();
+    }
   }
 
   async setBirthday(serverId, userId, year, month, day, timezone) {

@@ -1,8 +1,6 @@
 import { SlashCommandBuilder, User } from "discord.js";
 import { getArgsFromMessage } from "../util.js";
 
-const SUPPORTED_TIMEZONES = Intl.supportedValuesOf("timeZone");
-
 let exportObj = {
   name: "birthday",
   description: "Gets your or someone elses birthday from the bot",

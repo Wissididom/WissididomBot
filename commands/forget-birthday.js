@@ -1,7 +1,4 @@
 import { SlashCommandBuilder } from "discord.js";
-import { getArgsFromMessage } from "../util.js";
-
-const SUPPORTED_TIMEZONES = Intl.supportedValuesOf("timeZone");
 
 let exportObj = {
   name: "forget-birthday",
