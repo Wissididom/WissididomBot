@@ -3,6 +3,11 @@ import { parse as parsePath } from "path";
 import Database from "./database/mariadb.js";
 
 import RememberBirthday from "./commands/remember-birthday.js";
+import ForgetBirthday from "./commands/forget-birthday.js";
+
+export function initDb() {
+  Database.initDb();
+}
 
 function getAvailableDefaultCommandNames() {
   let commands = [];
@@ -37,6 +42,8 @@ async function getCommandObject(commandName) {
   switch (commandName) {
     case "remember-birthday":
       return RememberBirthday;
+    case "forget-birthday":
+      return ForgetBirthday;
     default:
       return null;
   }

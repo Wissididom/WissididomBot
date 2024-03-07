@@ -7,7 +7,9 @@ export default new (class Database {
   #Birthdays = class extends Model {};
   #Logging = class extends Model {};
 
-  constructor() {
+  constructor() {}
+
+  async initDb() {
     if (process.env.DATABASE_URL) {
       this.#db = new Sequelize(process.env.DATABASE_URL, {
         logging: false,
@@ -109,14 +111,10 @@ export default new (class Database {
       },
       {
         sequelize: this.#db,
-        modelName: "settings",
+        modelName: "logging",
         timestamps: false,
       },
     );
-    this.initDb();
-  }
-
-  async initDb() {
     await this.#Settings.sync({ alter: true });
     await this.#Birthdays.sync({ alter: true });
     await this.#Logging.sync({ alter: true });
@@ -196,6 +194,15 @@ export default new (class Database {
       month,
       day,
       timezone,
+    });
+  }
+
+  async deleteBirthday(serverId, userId) {
+    return await this.#Birthdays.destroy({
+      where: {
+        serverId,
+        userId,
+      },
     });
   }
 })();

@@ -5,6 +5,7 @@ import { moderateBot, moderateUser } from "./moderation.js";
 import {
   handleMessageCommands,
   handleApplicationCommands,
+  initDb,
 } from "./commands.js";
 
 const client = new Client({
@@ -40,6 +41,7 @@ const client = new Client({
 
 client.on(Events.ClientReady, () => {
   console.log(`Logged in as ${client.user?.tag}!`);
+  initDb();
 });
 
 client.on(Events.MessageCreate, async (msg) => {
