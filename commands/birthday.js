@@ -56,7 +56,7 @@ let exportObj = {
         interaction.guildId,
         member instanceof User ? member.id : member,
       );
-      if (result) {
+      if (birthday) {
         await interaction.reply({
           content: `<@${member}>'s birthday is \`${birthday.year}-${birthday.month}-${birthday.day}\` (${birthday.timezone})!`,
           allowed_mentions: { parse: [] }, // Prevent pings of other people
