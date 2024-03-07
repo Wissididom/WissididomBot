@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "start": "node build/index.js",
-    "startts": "ts-node src/index.ts",
+    "start": "node index.js",
     "check-format": "prettier --check .",
     "format": "prettier --write ."
   },
