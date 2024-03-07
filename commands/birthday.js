@@ -24,9 +24,14 @@ let exportObj = {
       if (!member || member == "") {
         member = msg.author.id;
       } else {
-        let memberRegex = /(?:<@!?\d+>|\d+)/g;
+        let memberRegex = /(?:<@!?(\d+)>|(\d+))/g;
         let memberMatch = memberRegex.exec(member);
-        if (!memberMatch) {
+        if (memberMatch) {
+          member =
+            memberMatch[1] && memberMatch[1].trim().length > 0
+              ? memberMatch[1]
+              : memberMatch[2];
+        } else {
           await msg.reply({
             content:
               "You must specify a valid member, if you want to specify a member (Either mention or use their ID)",
@@ -48,7 +53,7 @@ let exportObj = {
   },
   runInteraction: async (interaction, db) => {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
-      let member = interaction.options.getUser("member");
+      let member = interaction.options.getUser("member")?.id;
       if (!member) {
         member = interaction.user.id;
       }
