@@ -5,7 +5,7 @@ let exportObj = {
   interval: 60 * 60 * 1000,
   runInterval: async (intervalObj, client, db) => {
     let currentDate = new Date();
-    let birthdays = db.getBirthdays();
+    let birthdays = await db.getBirthdays();
     for (let birthday of birthdays) {
       if (birthday.day == 29 && birthday.month == 2) {
         // TODO: Consider timezone from database
