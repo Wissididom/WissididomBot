@@ -1,6 +1,12 @@
 import "dotenv/config";
 
-import { Client, Events, GatewayIntentBits, Partials } from "discord.js";
+import {
+  AuditLogEvent,
+  Client,
+  Events,
+  GatewayIntentBits,
+  Partials,
+} from "discord.js";
 import { moderateBot, moderateUser } from "./moderation.js";
 import {
   handleMessageCommands,
@@ -60,6 +66,119 @@ client.on(Events.MessageCreate, async (msg) => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
   await handleApplicationCommands(interaction);
+});
+
+client.on(Events.GuildAuditLogEntryCreate, (auditLogEntry, guild) => {
+  switch (auditLogEntry.action) {
+    case AuditLogEvent.ApplicationCommandPermissionUpdate:
+      break;
+    case AuditLogEvent.AutoModerationBlockMessage:
+      break;
+    case AuditLogEvent.AutoModerationFlagToChannel:
+      break;
+    case AuditLogEvent.AutoModerationRuleCreate:
+      break;
+    case AuditLogEvent.AutoModerationRuleDelete:
+      break;
+    case AuditLogEvent.AutoModerationRuleUpdate:
+      break;
+    case AuditLogEvent.AutoModerationUserCommunicationDisabled:
+      break;
+    case AuditLogEvent.BotAdd:
+      break;
+    case AuditLogEvent.ChannelCreate:
+      break;
+    case AuditLogEvent.ChannelDelete:
+      break;
+    case AuditLogEvent.ChannelOverwriteCreate:
+      break;
+    case AuditLogEvent.ChannelOverwriteDelete:
+      break;
+    case AuditLogEvent.ChannelOverwriteUpdate:
+      break;
+    case AuditLogEvent.ChannelUpdate:
+      break;
+    case AuditLogEvent.CreatorMonetizationRequestCreated:
+      break;
+    case AuditLogEvent.CreatorMonetizationTermsAccepted:
+      break;
+    case AuditLogEvent.EmojiCreate:
+      break;
+    case AuditLogEvent.EmojiDelete:
+      break;
+    case AuditLogEvent.EmojiUpdate:
+      break;
+    case AuditLogEvent.GuildScheduledEventCreate:
+      break;
+    case AuditLogEvent.GuildScheduledEventDelete:
+      break;
+    case AuditLogEvent.GuildScheduledEventUpdate:
+      break;
+    case AuditLogEvent.GuildUpdate:
+      break;
+    case AuditLogEvent.IntegrationCreate:
+      break;
+    case AuditLogEvent.IntegrationDelete:
+      break;
+    case AuditLogEvent.IntegrationUpdate:
+      break;
+    case AuditLogEvent.InviteCreate:
+      break;
+    case AuditLogEvent.MemberBanAdd:
+      break;
+    case AuditLogEvent.MemberBanRemove:
+      break;
+    case AuditLogEvent.MemberDisconnect:
+      break;
+    case AuditLogEvent.MemberKick:
+      break;
+    case AuditLogEvent.MemberMove:
+      break;
+    case AuditLogEvent.MemberPrune:
+      break;
+    case AuditLogEvent.MemberRoleUpdate:
+      break;
+    case AuditLogEvent.MemberUpdate:
+      break;
+    case AuditLogEvent.MessageBulkDelete:
+      break;
+    case AuditLogEvent.MessageDelete:
+      break;
+    case AuditLogEvent.MessagePin:
+      break;
+    case AuditLogEvent.MessageUnpin:
+      break;
+    case AuditLogEvent.RoleCreate:
+      break;
+    case AuditLogEvent.RoleDelete:
+      break;
+    case AuditLogEvent.RoleUpdate:
+      break;
+    case AuditLogEvent.StageInstanceCreate:
+      break;
+    case AuditLogEvent.StageInstanceDelete:
+      break;
+    case AuditLogEvent.StageInstanceUpdate:
+      break;
+    case AuditLogEvent.StickerCreate:
+      break;
+    case AuditLogEvent.StickerDelete:
+      break;
+    case AuditLogEvent.StickerUpdate:
+      break;
+    case AuditLogEvent.ThreadCreate:
+      break;
+    case AuditLogEvent.ThreadDelete:
+      break;
+    case AuditLogEvent.ThreadUpdate:
+      break;
+    case AuditLogEvent.WebhookCreate:
+      break;
+    case AuditLogEvent.WebhookDelete:
+      break;
+    case AuditLogEvent.WebhookUpdate:
+      break;
+  }
 });
 
 if (!process.env.DISCORD_TOKEN) {
