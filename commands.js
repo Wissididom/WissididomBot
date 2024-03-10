@@ -6,8 +6,8 @@ import RememberBirthday from "./commands/remember-birthday.js";
 import ForgetBirthday from "./commands/forget-birthday.js";
 import Birthday from "./commands/birthday.js";
 
-export function initDb() {
-  Database.initDb();
+export function getDatabase() {
+  return Database;
 }
 
 function getAvailableDefaultCommandNames() {

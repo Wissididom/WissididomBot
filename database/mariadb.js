@@ -43,6 +43,10 @@ export default new (class Database {
           allowNull: false,
           defaultValue: "Europe/London",
         },
+        birthdayWishingChannel: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize: this.#db,
@@ -176,14 +180,68 @@ export default new (class Database {
     }
   }
 
+  async getBirthdayWishingChannel(serverId = null) {
+    if (serverId) {
+      return (
+        (
+          await this.#Settings.findOne({
+            where: {
+              serverId,
+            },
+          })
+        )?.birthdayWishingChannel ?? null
+      );
+    } else {
+      let settings = await this.#Settings.findAll();
+      if (!settings) return null;
+      let birthdayWishingChannels = {};
+      for (let setting of settings) {
+        birthdayWishingChannels[setting.serverId] =
+          setting.birthdayWishingChannel;
+      }
+      return birthdayWishingChannels;
+    }
+  }
+
+  async setBirthdayWishingChannel(serverId, channelId) {
+    let oldBirthdayWishingChannel =
+      await this.getBirthdayWishingChannel(serverId);
+    if (oldBirthdayWishingChannel) {
+      return await this.#Settings.update(
+        {
+          birthdayWishingChannel: channelId,
+        },
+        {
+          where: { serverId },
+        },
+      );
+    } else {
+      return await this.#Settings.create({
+        serverId,
+        birthdayWishingChannel: channelId,
+      });
+    }
+  }
+
   async getBirthday(serverId, userId) {
-    let result = await this.#Birthdays.findOne({
+    return await this.#Birthdays.findOne({
       where: {
         serverId,
         userId,
       },
     });
-    return result;
+  }
+
+  async getBirthdays(serverId = null) {
+    if (serverId) {
+      return await this.#Birthdays.findAll({
+        where: {
+          serverId,
+        },
+      });
+    } else {
+      return await this.#Birthdays.findAll();
+    }
   }
 
   async setBirthday(serverId, userId, year, month, day, timezone) {
