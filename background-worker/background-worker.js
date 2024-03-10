@@ -17,7 +17,7 @@ export function runWorker(name, client, db) {
 }
 
 export function getWorker(name) {
-  switch (commandName) {
+  switch (name) {
     case "birthday":
       return BirthdayWorker;
     default:
