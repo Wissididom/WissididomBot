@@ -10,8 +10,8 @@ export function runWorkers(client, db) {
 export function runWorker(name, client, db) {
   let worker = getWorker(name);
   if (worker) {
-    let interval = setInterval(() => {
-      worker.runInterval(interval, client, db);
+    let interval = setInterval(async () => {
+      await worker.runInterval(interval, client, db);
     }, worker.interval);
   }
 }
