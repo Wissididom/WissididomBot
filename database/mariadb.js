@@ -263,4 +263,51 @@ export default new (class Database {
       },
     });
   }
+
+  async getLoggings(serverId = null, event = null) {
+    if (serverId) {
+      if (event) {
+        return await this.#Logging.findAll({
+          where: {
+            serverId,
+            event,
+          },
+        });
+      } else {
+        return await this.#Logging.findAll({
+          where: {
+            serverId,
+          },
+        });
+      }
+    } else {
+      return await this.#Logging.findAll();
+    }
+  }
+
+  async setLogging(serverId, event, sourceChannel, destinationChannel) {
+    let oldLoggings = await this.getLoggings(serverId);
+    for (let oldLogging of oldLoggings) {
+      if (oldLogging && oldLogging.event == event) {
+        return await this.#Logging.update(
+          {
+            sourceChannel,
+            destinationChannel,
+          },
+          {
+            where: {
+              serverId,
+              event,
+            },
+          },
+        );
+      }
+    }
+    return await this.#Logging.create({
+      serverId,
+      event,
+      sourceChannel,
+      destinationChannel,
+    });
+  }
 })();
