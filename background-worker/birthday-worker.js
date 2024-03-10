@@ -22,7 +22,7 @@ let exportObj = {
     let birthdayWishingChannel = await db.getBirthdayWishingChannel();
     for (let birthday of birthdays) {
       let currentDate = DateTime.now().setZone(birthday.timezone);
-      if (currentDate.minute != 0) continue; // Only run on minute 0
+      if (currentDate.minute != 0 || currentDate.hour != 0) continue; // Only run on minute and hour 0 to prevent duplicates
       let birthDateTime = DateTime.fromObject(
         {
           day: birthday.day,
