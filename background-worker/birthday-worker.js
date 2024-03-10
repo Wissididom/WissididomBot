@@ -50,20 +50,21 @@ let exportObj = {
         ) {
           if (currentDate.month == 3 && currentDate.day == 1) {
             // Post on March 1st if it is a leap year
-            if (setAge)
+            if (setAge) {
               await sendMessage(
                 client,
                 birthdayWishingChannel[birthday.serverId],
                 birthday.userId,
                 `It's <@${birthday.userId}>'s birthday today (${age})!`,
               );
-            else
+            } else {
               await sendMessage(
                 client,
                 birthdayWishingChannel[birthday.serverId],
                 birthday.userId,
                 `It's <@${birthday.userId}>'s birthday today!`,
               );
+            }
             continue; // Skip further execution
           }
         }
@@ -72,20 +73,21 @@ let exportObj = {
           birthday.month == currentDate.month
         ) {
           // it's their birthday...
-          if (setAge)
+          if (setAge) {
             await sendMessage(
               client,
               birthdayWishingChannel[birthday.serverId],
               birthday.userId,
               `It's <@${birthday.userId}>'s birthday today (${age})!`,
             );
-          else
+          } else {
             await sendMessage(
               client,
               birthdayWishingChannel[birthday.serverId],
               birthday.userId,
               `It's <@${birthday.userId}>'s birthday today!`,
             );
+          }
         }
       }
     }
