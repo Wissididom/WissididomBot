@@ -5,8 +5,9 @@ import { moderateBot, moderateUser } from "./moderation.js";
 import {
   handleMessageCommands,
   handleApplicationCommands,
-  initDb,
+  getDatabase,
 } from "./commands.js";
+import { runWorkers } from "./background-worker.js";
 
 const client = new Client({
   intents: [
@@ -41,7 +42,9 @@ const client = new Client({
 
 client.on(Events.ClientReady, () => {
   console.log(`Logged in as ${client.user?.tag}!`);
-  initDb();
+  let db = getDatabase();
+  db.initDb();
+  runWorkers(client, db);
 });
 
 client.on(Events.MessageCreate, async (msg) => {

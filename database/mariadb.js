@@ -43,6 +43,10 @@ export default new (class Database {
           allowNull: false,
           defaultValue: "Europe/London",
         },
+        birthdayWishingChannel: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize: this.#db,
@@ -172,6 +176,49 @@ export default new (class Database {
       return await this.#Settings.create({
         serverId,
         timezone,
+      });
+    }
+  }
+
+  async getBirthdayWishingChannel(serverId = null) {
+    if (serverId) {
+      return (
+        (
+          await this.#Settings.findOne({
+            where: {
+              serverId,
+            },
+          })
+        )?.birthdayWishingChannel ?? null
+      );
+    } else {
+      let settings = await this.#Settings.findAll();
+      if (!settings) return null;
+      let birthdayWishingChannels = {};
+      for (let setting of settings) {
+        birthdayWishingChannels[setting.serverId] =
+          setting.birthdayWishingChannel;
+      }
+      return birthdayWishingChannels;
+    }
+  }
+
+  async setBirthdayWishingChannel(serverId, channelId) {
+    let oldBirthdayWishingChannel =
+      await this.getBirthdayWishingChannel(serverId);
+    if (oldBirthdayWishingChannel) {
+      return await this.#Settings.update(
+        {
+          birthdayWishingChannel: channelId,
+        },
+        {
+          where: { serverId },
+        },
+      );
+    } else {
+      return await this.#Settings.create({
+        serverId,
+        birthdayWishingChannel: channelId,
       });
     }
   }
