@@ -7,7 +7,7 @@ import {
   handleApplicationCommands,
   getDatabase,
 } from "./commands.js";
-import { runWorkers } from "./background-worker.js";
+import { runWorkers } from "./background-worker/background-worker.js";
 
 const client = new Client({
   intents: [
