@@ -1,3 +1,4 @@
+import { ApplicationCommandPermissionType } from "discord.js";
 import { AuditLogEvent, AutoModerationActionType } from "discord.js";
 
 let exportObj = {
@@ -19,13 +20,54 @@ let exportObj = {
   ],
   handleApplicationCommandPermissionsUpdate: async (client, db, data) => {
     let loggings = await db.getLoggings(
-      guild.id,
-      "applicationCommandPermissionUpdate".toLowerCase(),
+      data.guildId,
+      "applicationCommandPermissionsUpdate".toLowerCase(),
     );
+    let permissionLines = [];
+    for (let permission of data.permissions) {
+      let permissionType = "N/A";
+      let prefix = "";
+      switch (permission.type) {
+        case ApplicationCommandPermissionType.Role:
+          permissionType = "Role";
+          prefix = "@&";
+          break;
+        case ApplicationCommandPermissionType.User:
+          permissionType = "User";
+          prefix = "@";
+          break;
+        case ApplicationCommandPermissionType.Channel:
+          permissionType = "Channel";
+          prefix = "#";
+          break;
+        default:
+          break;
+      }
+      let who;
+      switch (permission.id) {
+        case data.guildId:
+          who = "All members are";
+          break;
+        case data.guildId - 1:
+          who = "All channels are";
+          break;
+        default:
+          who = `<${prefix}${permission.id}> is`;
+          break;
+      }
+      if (who == data.guildId) {
+        who = "All members";
+      } else if (who == data.guildId - 1) {
+        who = "All channels";
+      }
+      permissionLines.push(
+        `- ${who} ${permission.permission ? "allowed" : "not allowed"} to use this command\n`,
+      );
+    }
     for (let logging of loggings) {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
       targetChannel.send({
-        content: `<@${data.applicationId}>'s application commands were updated!`,
+        content: `Command ${data.id} (of <@${data.applicationId}>) permissions were updated:\n\n${permissionLines.join("\n")}`,
         allowed_mentions: { parse: [] },
       });
     }
@@ -35,51 +77,23 @@ let exportObj = {
     db,
     autoModerationActionExecution,
   ) => {
+    // TODO: Untested
+    let actionType = autoModerationActionExecution.action.type.map((value) => {
+      if (value == AutoModerationActionType.BlockMessage)
+        return "blocked a message";
+      if (value == AutoModerationActionType.SendAlertMessage)
+        return "logged a message";
+      if (value == AutoModerationActionType.Timeout) return "timed out a user";
+      return "logged a message";
+    });
     let loggings = await db.getLoggings(
       guild.id,
       "autoModerationActionExecution".toLowerCase(),
     );
     for (let logging of loggings) {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
-      let actionType = autoModerationActionExecution.action.type.map(
-        (value) => {
-          if (value == AutoModerationActionType.BlockMessage)
-            return "blocked a message";
-          if (value == AutoModerationActionType.SendAlertMessage)
-            return "logged a message";
-          if (value == AutoModerationActionType.Timeout)
-            return "timed out a user";
-          return "logged a message";
-        },
-      );
       targetChannel.send({
         content: `AutoMod ${actionType}!`,
-        allowed_mentions: { parse: [] },
-      });
-    }
-  },
-  handleAutoModerationRuleCreate: async (client, db, autoModerationRule) => {
-    let loggings = await db.getLoggings(
-      guild.id,
-      "autoModerationRuleCreate".toLowerCase(),
-    );
-    for (let logging of loggings) {
-      let targetChannel = await client.channels.fetch(logging.targetChannel);
-      targetChannel.send({
-        content: `AutoMod Rule ${autoModerationRule.name} created by <@${autoModerationRule.creatorId}>!`,
-        allowed_mentions: { parse: [] },
-      });
-    }
-  },
-  handleAutoModerationRuleDelete: async (client, db, autoModerationRule) => {
-    let loggings = await db.getLoggings(
-      guild.id,
-      "autoModerationRuleDelete".toLowerCase(),
-    );
-    for (let logging of loggings) {
-      let targetChannel = await client.channels.fetch(logging.targetChannel);
-      targetChannel.send({
-        content: `AutoMod Rule ${autoModerationRule.name} deleted (created by <@${autoModerationRule.creatorId}>)!`,
         allowed_mentions: { parse: [] },
       });
     }
@@ -90,7 +104,7 @@ let exportObj = {
     oldAutoModerationRule,
     newAutoModerationRule,
   ) => {
-    let loggings = await db.getLoggings(
+    /*let loggings = await db.getLoggings(
       guild.id,
       "autoModerationRuleUpdate".toLowerCase(),
     );
@@ -149,9 +163,10 @@ let exportObj = {
         content: `AutoMod Rule updated (created by <@${newAutoModerationRule.creatorId}>):\n${content}`,
         allowed_mentions: { parse: [] },
       });
-    }
+    }*/
   },
   handleChannelUpdate: async (client, db, oldChannel, newChannel) => {
+    // TODO: Test
     let loggings = await db.getLoggings(
       newChannel.guildId,
       "channelUpdate".toLowerCase(),
@@ -215,8 +230,73 @@ let exportObj = {
       case AuditLogEvent.AutoModerationFlagToChannel:
         break;
       case AuditLogEvent.AutoModerationRuleCreate:
+        loggings = await db.getLoggings(
+          guild.id,
+          "autoModerationRuleCreate".toLowerCase(),
+        );
+        tempdata = {};
+        tempdata.target = await guild.autoModerationRules.fetch(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        tempdata.actions = [];
+        for (let action of tempdata.target.actions) {
+          let actionType = "N/A";
+          switch (action.type) {
+            case AutoModerationActionType.BlockMessage:
+              if (action.metadata.customMessage) {
+                actionType = `Block Message with custom message: ${action.metadata.customMessage}`;
+              } else {
+                actionType = "Block Message";
+              }
+              break;
+            case AutoModerationActionType.SendAlertMessage:
+              let channel = await client.channels.fetch(
+                action.metadata.channelId,
+              );
+              actionType = `Send Alert Message to <#${action.metadata.channelId}> (${channel?.name} - ${action.metadata.channelId})`;
+              break;
+            case AutoModerationActionType.Timeout:
+              actionType = `Timeout for ${action.metadata.durationSeconds} seconds`;
+              break;
+            default:
+              break;
+          }
+          tempdata.actions.push(`- ${actionType}`);
+        }
+        // TODO: exemptChannels, exemptRoles, triggerMetadata, triggerType
+        /*tempdata.exemptChannels = [];
+        for (let exemptChannel of tempdata.target.exemptChannels) {
+          tempdata.exemptChannels.push(exemptChannel);
+        }
+        tempdata.exemptRoles = [];
+        for (let exemptRole of tempdata.target.exemptRoles) {
+          tempdata.exemptRoles.push(exemptRole);
+        }*/
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          await targetChannel.send({
+            content: `AutoMod Rule ${tempdata.target.name} (ID: ${targetId}) created by <@${executorId}> (${tempdata.executor?.username} - ${executorId})${tempdata.actions.length > 0 ? `, actions:\n${tempdata.actions.join("\n")}` : "!"}`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.AutoModerationRuleDelete:
+        loggings = await db.getLoggings(
+          guild.id,
+          "autoModerationRuleDelete".toLowerCase(),
+        );
+        tempdata = {};
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          await targetChannel.send({
+            content: `AutoMod Rule ${targetId} deleted by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.AutoModerationRuleUpdate:
         break;

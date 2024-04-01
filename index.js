@@ -82,22 +82,6 @@ client.on(
   },
 );
 
-client.on(Events.AutoModerationRuleCreate, async (autoModerationRule) => {
-  await Logging.handleAutoModerationRuleCreate(
-    client,
-    getDatabase(),
-    autoModerationRule,
-  );
-});
-
-client.on(Events.AutoModerationRuleDelete, async (autoModerationRule) => {
-  await Logging.handleAutoModerationRuleDelete(
-    client,
-    getDatabase(),
-    autoModerationRule,
-  );
-});
-
 client.on(
   Events.AutoModerationRuleUpdate,
   async (oldAutoModerationRule, newAutoModerationRule) => {
