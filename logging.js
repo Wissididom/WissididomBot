@@ -11,6 +11,7 @@ let exportObj = {
     "channelDelete",
     "channelPinsUpdate",
     "channelUpdate",
+    "guildAuditLogEntryCreate",
   ],
   handleApplicationCommandPermissionsUpdate: async (client, db, data) => {
     let loggings = db.getLoggings(
