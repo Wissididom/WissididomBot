@@ -108,7 +108,7 @@ export default new (class Database {
           type: DataTypes.STRING,
           allowNull: false,
         },
-        destinationChannel: {
+        targetChannel: {
           type: DataTypes.STRING,
           allowNull: false,
         },
@@ -285,14 +285,14 @@ export default new (class Database {
     }
   }
 
-  async setLogging(serverId, event, sourceChannel, destinationChannel) {
+  async setLogging(serverId, event, sourceChannel, targetChannel) {
     let oldLoggings = await this.getLoggings(serverId);
     for (let oldLogging of oldLoggings) {
       if (oldLogging && oldLogging.event == event) {
         return await this.#Logging.update(
           {
             sourceChannel,
-            destinationChannel,
+            targetChannel,
           },
           {
             where: {
@@ -307,7 +307,33 @@ export default new (class Database {
       serverId,
       event,
       sourceChannel,
-      destinationChannel,
+      targetChannel,
+    });
+  }
+
+  async deleteLogging(serverId, event, sourceChannel, targetChannel) {
+    let oldLoggings = await this.getLoggings(serverId);
+    for (let oldLogging of oldLoggings) {
+      if (oldLogging && oldLogging.event == event) {
+        return await this.#Logging.update(
+          {
+            sourceChannel,
+            targetChannel,
+          },
+          {
+            where: {
+              serverId,
+              event,
+            },
+          },
+        );
+      }
+    }
+    return await this.#Logging.create({
+      serverId,
+      event,
+      sourceChannel,
+      targetChannel,
     });
   }
 })();

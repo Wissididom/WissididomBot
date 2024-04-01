@@ -5,6 +5,7 @@ import Database from "./database/mariadb.js";
 import RememberBirthday from "./commands/remember-birthday.js";
 import ForgetBirthday from "./commands/forget-birthday.js";
 import Birthday from "./commands/birthday.js";
+import Logging from "./commands/logging.js";
 
 export function getDatabase() {
   return Database;
@@ -47,6 +48,8 @@ async function getCommandObject(commandName) {
       return ForgetBirthday;
     case "birthday":
       return Birthday;
+    case "logging":
+      return Logging;
     default:
       return null;
   }

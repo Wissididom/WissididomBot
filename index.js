@@ -75,10 +75,8 @@ client.on(Events.ApplicationCommandPermissionsUpdate, async (data) => {
     "ApplicationCommandPermissionUpdate",
   );
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
-    destinationChannel.send({
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
+    targetChannel.send({
       content: `<@${data.applicationId}>'s application commands were updated!`,
       allowed_mentions: { parse: [] },
     });
@@ -93,9 +91,7 @@ client.on(
       "AutoModerationActionExecution",
     );
     for (let logging of loggings) {
-      let destinationChannel = await client.channels.fetch(
-        logging.destinationChannel,
-      );
+      let targetChannel = await client.channels.fetch(logging.targetChannel);
       let actionType = autoModerationActionExecution.action.type.map(
         (value) => {
           if (value == AutoModerationActionType.BlockMessage)
@@ -107,7 +103,7 @@ client.on(
           return "logged a message";
         },
       );
-      destinationChannel.send({
+      targetChannel.send({
         content: `AutoMod ${actionType}!`,
         allowed_mentions: { parse: [] },
       });
@@ -121,10 +117,8 @@ client.on(Events.AutoModerationRuleCreate, async (autoModerationRule) => {
     "AutoModerationRuleCreate",
   );
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
-    destinationChannel.send({
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
+    targetChannel.send({
       content: `AutoMod Rule ${autoModerationRule.name} created by <@${autoModerationRule.creatorId}>!`,
       allowed_mentions: { parse: [] },
     });
@@ -137,10 +131,8 @@ client.on(Events.AutoModerationRuleDelete, async (autoModerationRule) => {
     "AutoModerationRuleDelete",
   );
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
-    destinationChannel.send({
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
+    targetChannel.send({
       content: `AutoMod Rule ${autoModerationRule.name} deleted (created by <@${autoModerationRule.creatorId}>)!`,
       allowed_mentions: { parse: [] },
     });
@@ -155,9 +147,7 @@ client.on(
       "AutoModerationRuleUpdate",
     );
     for (let logging of loggings) {
-      let destinationChannel = await client.channels.fetch(
-        logging.destinationChannel,
-      );
+      let targetChannel = await client.channels.fetch(logging.targetChannel);
       let content = "";
       if (oldAutoModerationRule) {
         for (let oldAction of oldAutoModerationRule.actions) {
@@ -207,7 +197,7 @@ client.on(
           }
         }
       }
-      destinationChannel.send({
+      targetChannel.send({
         content: `AutoMod Rule updated (created by <@${newAutoModerationRule.creatorId}>):\n${content}`,
         allowed_mentions: { parse: [] },
       });
@@ -218,10 +208,8 @@ client.on(
 client.on(Events.ChannelCreate, async (channel) => {
   let loggings = getDatabase().getLoggings(guild.id, "ChannelCreate");
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
-    destinationChannel.send({
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
+    targetChannel.send({
       content: `Channel <#${channel.id}> (${channel.name} - ${channel.id}) created!`,
       allowed_mentions: { parse: [] },
     });
@@ -232,10 +220,8 @@ client.on(Events.ChannelDelete, async (channel) => {
   if (channel.isDMBased()) return; // Doesn't make sense in DMs
   let loggings = getDatabase().getLoggings(guild.id, "ChannelDelete");
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
-    destinationChannel.send({
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
+    targetChannel.send({
       content: `Channel <#${channel.id}> (${channel.name} - ${channel.id}) deleted!`,
       allowed_mentions: { parse: [] },
     });
@@ -245,10 +231,8 @@ client.on(Events.ChannelDelete, async (channel) => {
 client.on(Events.ChannelPinsUpdate, async (channel, time) => {
   let loggings = getDatabase().getLoggings(guild.id, "ChannelPinsUpdate");
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
-    destinationChannel.send({
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
+    targetChannel.send({
       content: `Pins of Channel <#${channel.id}> (${channel.name} - ${channel.id}) updated!`,
       allowed_mentions: { parse: [] },
     });
@@ -260,9 +244,7 @@ client.on(Events.ChannelUpdate, async (oldChannel, newChannel) => {
   if (newChannel.isDMBased()) return; // Doesn't make sense in DMs
   let loggings = getDatabase().getLoggings(guild.id, "ChannelUpdate");
   for (let logging of loggings) {
-    let destinationChannel = await client.channels.fetch(
-      logging.destinationChannel,
-    );
+    let targetChannel = await client.channels.fetch(logging.targetChannel);
     let content = "";
     if (oldChannel.name != newChannel.name) {
       content += `Name:\nBefore: ${oldChannel.name}\nAfter: ${newChannel.name}\n`;
@@ -285,7 +267,7 @@ client.on(Events.ChannelUpdate, async (oldChannel, newChannel) => {
     if (oldChannel.type != newChannel.type) {
       content += `Type:\nBefore: \`${oldChannel.type}\`\nAfter: ${newChannel.type})\n`;
     }
-    destinationChannel.send({
+    targetChannel.send({
       content: `Channel <#${oldChannel.id}> (${newChannel.name} - ${oldChannel.id}) updated:`,
       allowed_mentions: { parse: [] },
     });
