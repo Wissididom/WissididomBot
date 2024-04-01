@@ -304,7 +304,7 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) banned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) banned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
             allowed_mentions: { parse: [] },
           });
         }
@@ -322,7 +322,7 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) unbanned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) unbanned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
             allowed_mentions: { parse: [] },
           });
         }
@@ -340,7 +340,7 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) disconnected by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) disconnected by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
             allowed_mentions: { parse: [] },
           });
         }
@@ -355,7 +355,7 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) kicked by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) kicked by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
             allowed_mentions: { parse: [] },
           });
         }
