@@ -9,12 +9,16 @@ let exportObj = {
     "autoModerationRuleUpdate",
     "channelCreate",
     "channelDelete",
-    "channelPinsUpdate",
+    "messageDelete",
+    "memberKick",
+    "memberBanAdd",
+    "memberBanRemove",
+    "channelPin",
+    "channelUnpin",
     "channelUpdate",
-    "guildAuditLogEntryCreate",
   ],
   handleApplicationCommandPermissionsUpdate: async (client, db, data) => {
-    let loggings = db.getLoggings(
+    let loggings = await db.getLoggings(
       guild.id,
       "applicationCommandPermissionUpdate".toLowerCase(),
     );
@@ -31,7 +35,7 @@ let exportObj = {
     db,
     autoModerationActionExecution,
   ) => {
-    let loggings = db.getLoggings(
+    let loggings = await db.getLoggings(
       guild.id,
       "autoModerationActionExecution".toLowerCase(),
     );
@@ -55,7 +59,7 @@ let exportObj = {
     }
   },
   handleAutoModerationRuleCreate: async (client, db, autoModerationRule) => {
-    let loggings = db.getLoggings(
+    let loggings = await db.getLoggings(
       guild.id,
       "autoModerationRuleCreate".toLowerCase(),
     );
@@ -68,7 +72,7 @@ let exportObj = {
     }
   },
   handleAutoModerationRuleDelete: async (client, db, autoModerationRule) => {
-    let loggings = db.getLoggings(
+    let loggings = await db.getLoggings(
       guild.id,
       "autoModerationRuleDelete".toLowerCase(),
     );
@@ -86,7 +90,7 @@ let exportObj = {
     oldAutoModerationRule,
     newAutoModerationRule,
   ) => {
-    let loggings = db.getLoggings(
+    let loggings = await db.getLoggings(
       guild.id,
       "autoModerationRuleUpdate".toLowerCase(),
     );
@@ -147,38 +151,11 @@ let exportObj = {
       });
     }
   },
-  handleChannelCreate: async (client, db, channel) => {
-    let loggings = db.getLoggings(guild.id, "channelCreate".toLowerCase());
-    for (let logging of loggings) {
-      let targetChannel = await client.channels.fetch(logging.targetChannel);
-      targetChannel.send({
-        content: `Channel <#${channel.id}> (${channel.name} - ${channel.id}) created!`,
-        allowed_mentions: { parse: [] },
-      });
-    }
-  },
-  handleChannelDelete: async (client, db, channel) => {
-    let loggings = db.getLoggings(guild.id, "channelDelete".toLowerCase());
-    for (let logging of loggings) {
-      let targetChannel = await client.channels.fetch(logging.targetChannel);
-      targetChannel.send({
-        content: `Channel <#${channel.id}> (${channel.name} - ${channel.id}) deleted!`,
-        allowed_mentions: { parse: [] },
-      });
-    }
-  },
-  handleChannelPinsUpdate: async (client, db, channel, time) => {
-    let loggings = db.getLoggings(guild.id, "channelPinsUpdate".toLowerCase());
-    for (let logging of loggings) {
-      let targetChannel = await client.channels.fetch(logging.targetChannel);
-      targetChannel.send({
-        content: `Pins of Channel <#${channel.id}> (${channel.name} - ${channel.id}) updated!`,
-        allowed_mentions: { parse: [] },
-      });
-    }
-  },
   handleChannelUpdate: async (client, db, oldChannel, newChannel) => {
-    let loggings = db.getLoggings(guild.id, "channelUpdate".toLowerCase());
+    let loggings = await db.getLoggings(
+      newChannel.guildId,
+      "channelUpdate".toLowerCase(),
+    );
     for (let logging of loggings) {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
       let content = "";
@@ -209,8 +186,28 @@ let exportObj = {
       });
     }
   },
+  handleMessageDelete: async (client, db, message) => {
+    // TODO: Actually cache the data on messageCreate so I can use the old message content or author id
+    let loggings = await db.getLoggings(
+      message.guild.id,
+      "messageDelete".toLowerCase(),
+    );
+    for (let logging of loggings) {
+      let targetChannel = await client.channels.fetch(logging.targetChannel);
+      targetChannel.send({
+        content: `Message deleted in <#${message.channel.id}>`,
+        allowed_mentions: { parse: [] },
+      });
+    }
+  },
   handleGuildAuditLogEntryCreate: async (client, db, auditLogEntry, guild) => {
-    switch (auditLogEntry.action) {
+    const { action, extra, executorId, targetId } = auditLogEntry;
+    let loggings = null;
+    let tempdata = null;
+    console.log("extra:" + JSON.stringify(extra));
+    console.log("executorId:" + JSON.stringify(executorId));
+    console.log("targetId:" + JSON.stringify(targetId));
+    switch (action) {
       case AuditLogEvent.ApplicationCommandPermissionUpdate:
         break;
       case AuditLogEvent.AutoModerationBlockMessage:
@@ -228,8 +225,40 @@ let exportObj = {
       case AuditLogEvent.BotAdd:
         break;
       case AuditLogEvent.ChannelCreate:
+        loggings = await db.getLoggings(
+          guild.id,
+          "channelCreate".toLowerCase(),
+        );
+        tempdata = {};
+        tempdata.target = await client.channels.fetch(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Channel <#${targetId}> (${tempdata.target?.name} - ${targetId}) created by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.ChannelDelete:
+        loggings = await db.getLoggings(
+          guild.id,
+          "channelDelete".toLowerCase(),
+        );
+        tempdata = {};
+        tempdata.target = await client.channels.cache.get(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Channel <#${targetId}> (${tempdata.target?.name ?? "N/A"} - ${targetId}) deleted by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.ChannelOverwriteCreate:
         break;
@@ -266,12 +295,70 @@ let exportObj = {
       case AuditLogEvent.InviteCreate:
         break;
       case AuditLogEvent.MemberBanAdd:
+        loggings = await db.getLoggings(guild.id, "memberBanAdd".toLowerCase());
+        tempdata = {};
+        tempdata.target = await client.users.fetch(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) banned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.MemberBanRemove:
+        loggings = await db.getLoggings(
+          guild.id,
+          "memberBanRemove".toLowerCase(),
+        );
+        tempdata = {};
+        tempdata.target = await client.users.fetch(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) unbanned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.MemberDisconnect:
+        loggings = await db.getLoggings(
+          guild.id,
+          "memberDisconnect".toLowerCase(),
+        );
+        tempdata = {};
+        tempdata.target = await client.users.fetch(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) disconnected by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.MemberKick:
+        loggings = await db.getLoggings(guild.id, "memberKick".toLowerCase());
+        tempdata = {};
+        tempdata.target = await client.users.fetch(targetId);
+        tempdata.executor = await client.users.fetch(executorId);
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Member <#${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) kicked by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.MemberMove:
         break;
@@ -284,10 +371,31 @@ let exportObj = {
       case AuditLogEvent.MessageBulkDelete:
         break;
       case AuditLogEvent.MessageDelete:
+        // Works only when the message has been deleted by someone other than the author and even then only gets sent once even when multiple messages were deleted
         break;
       case AuditLogEvent.MessagePin:
+        loggings = await db.getLoggings(guild.id, "channelPin".toLowerCase());
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Message by <@${targetId}> in channel <#${extra.channel.id}> (${extra.channel.name} - ${extra.channel.id}) pinned by <@${executorId}>! [Jump to Message](https://discord.com/channels/${extra.channel.guildId}/${extra.channel.id}/${extra.messageId})`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.MessageUnpin:
+        loggings = await db.getLoggings(guild.id, "channelUnpin".toLowerCase());
+        for (let logging of loggings) {
+          let targetChannel = await client.channels.fetch(
+            logging.targetChannel,
+          );
+          targetChannel.send({
+            content: `Message by <@${targetId}> in channel <#${extra.channel.id}> (${extra.channel.name} - ${extra.channel.id}) unpinned by <@${executorId}>! [Jump to Message](https://discord.com/channels/${extra.channel.guildId}/${extra.channel.id}/${extra.messageId})`,
+            allowed_mentions: { parse: [] },
+          });
+        }
         break;
       case AuditLogEvent.RoleCreate:
         break;

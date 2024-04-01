@@ -110,19 +110,9 @@ client.on(
   },
 );
 
-client.on(Events.ChannelCreate, async (channel) => {
-  if (channel.isDMBased()) return;
-  await Logging.handleChannelCreate(client, getDatabase(), channel);
-});
-
-client.on(Events.ChannelDelete, async (channel) => {
-  if (channel.isDMBased()) return;
-  await Logging.handleChannelDelete(client, getDatabase(), channel);
-});
-
-client.on(Events.ChannelPinsUpdate, async (channel, time) => {
-  if (channel.isDMBased()) return;
-  await Logging.handleChannelPinsUpdate(client, getDatabase(), channel, time);
+client.on(Events.MessageDelete, async (message) => {
+  if (!message.guild || !message.guildId) return;
+  await Logging.handleMessageDelete(client, getDatabase(), message);
 });
 
 client.on(Events.ChannelUpdate, async (oldChannel, newChannel) => {

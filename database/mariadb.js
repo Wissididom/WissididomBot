@@ -106,7 +106,7 @@ export default new (class Database {
         },
         sourceChannel: {
           type: DataTypes.STRING,
-          allowNull: false,
+          allowNull: true,
         },
         targetChannel: {
           type: DataTypes.STRING,
@@ -312,28 +312,13 @@ export default new (class Database {
   }
 
   async deleteLogging(serverId, event, sourceChannel, targetChannel) {
-    let oldLoggings = await this.getLoggings(serverId);
-    for (let oldLogging of oldLoggings) {
-      if (oldLogging && oldLogging.event == event) {
-        return await this.#Logging.update(
-          {
-            sourceChannel,
-            targetChannel,
-          },
-          {
-            where: {
-              serverId,
-              event,
-            },
-          },
-        );
-      }
-    }
-    return await this.#Logging.create({
-      serverId,
-      event,
-      sourceChannel,
-      targetChannel,
+    return await this.#Logging.destroy({
+      where: {
+        serverId,
+        event,
+        sourceChannel: sourceChannel ?? null,
+        targetChannel,
+      },
     });
   }
 })();

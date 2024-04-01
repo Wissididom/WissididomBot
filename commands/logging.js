@@ -197,6 +197,7 @@ let exportObj = {
   },
   runInteraction: async (interaction, db) => {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
+      await interaction.deferReply({ ephemeral: true });
       let action = interaction.options.getSubcommand();
       let type = interaction.options.getString("type");
       let source = interaction.options.getChannel("source");
@@ -225,39 +226,39 @@ let exportObj = {
           let updateResult = await db.setLogging(
             interaction.guildId,
             type,
-            source,
-            target,
+            source?.id,
+            target.id,
           );
           if (updateResult) {
-            await interaction.reply({
-              content: `Successfully ${foundLoggings > 0 ? "updated" : "added"} ${type} events from <#${source}> to post to <#${target}>!`,
+            await interaction.editReply({
+              content: `Successfully ${foundLoggings > 0 ? "updated" : "added"} ${type} events from ${source ? `<#${source.id}>` : "every channel"} to post to <#${target.id}>!`,
             });
           } else {
-            await interaction.reply({
-              content: `Failed to ${foundLoggings > 0 ? "update" : "add"} ${type} events from <#${source}> to post to <#${target}>!`,
+            await interaction.editReply({
+              content: `Failed to ${foundLoggings > 0 ? "update" : "add"} ${type} events from ${source ? `<#${source.id}>` : "every channel"} to post to <#${target.id}>!`,
             });
           }
           break;
         case "remove":
-          if (foundLoggings > 0) {
-            let deleteResult = await db.setLogging(
+          if (foundLoggings.length > 0) {
+            let deleteResult = await db.deleteLogging(
               interaction.guildId,
               type,
-              source,
-              target,
+              source?.id,
+              target.id,
             );
             if (deleteResult) {
-              await interaction.reply({
-                content: `Successfully deleted ${type} events from <#${source}> to post to <#${target}>!`,
+              await interaction.editReply({
+                content: `Successfully deleted ${type} events from ${source ? `<#${source.id}>` : "every channel"} to post to <#${target.id}>!`,
               });
             } else {
-              await interaction.reply({
-                content: `Failed to delete ${type} events from <#${source}> to post to <#${target}>!`,
+              await interaction.editReply({
+                content: `Failed to delete ${type} events from ${source ? `<#${source.id}>` : "every channel"} to post to <#${target.id}>!`,
               });
             }
           } else {
-            await interaction.reply({
-              content: `There is no ${type} event from <#${source}> to post to <#${target}> that could be deleted!`,
+            await interaction.editReply({
+              content: `There is no ${type} event from ${source ? `<#${source.id}>` : "every channel"} to post to <#${target.id}> that could be deleted!`,
             });
           }
           break;
@@ -265,15 +266,15 @@ let exportObj = {
           let loggingEntries = [];
           for (let logging of foundLoggings) {
             loggingEntries.push(
-              `- ${logging.event} (<#${logging.sourceChannel}> -> <#${logging.targetChannel}>)`,
+              `- ${logging.event} (${logging.sourceChannel ? `<#${logging.sourceChannel}>` : "Every channel"} -> <#${logging.targetChannel}>)`,
             );
           }
-          if (loggingEntries > 0) {
-            await interaction.reply({
-              content: `# There the following logging relationships setup for this server:\n${loggingEntries.join("\n")}`,
+          if (loggingEntries.length > 0) {
+            await interaction.editReply({
+              content: `# There are the following logging relationships setup for this server:\n${loggingEntries.join("\n")}`,
             });
           } else {
-            await interaction.reply({
+            await interaction.editReply({
               content:
                 "There are no logging relationships that could be shown here!",
             });

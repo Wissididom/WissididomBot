@@ -83,7 +83,7 @@ async function handleCommands(
 }
 
 export async function handleMessageCommands(msg) {
-  const prefix = (await Database.getSettings(msg.guildId))?.prefix ?? "!";
+  const prefix = (await Database.getPrefix(msg.guildId)) ?? "!";
   const commandName = await getCommandNameFromMessage(prefix, msg);
   if (!commandName) {
     // Command does not exist
