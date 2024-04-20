@@ -49,11 +49,11 @@ export default new (class Database {
         },
         birthdayWishingMessageWithAge: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
         birthdayWishingMessage: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
       },
       {
@@ -245,6 +245,12 @@ export default new (class Database {
             birthdaySetting.birthdayWishingMessageWithAge,
           birthdayWishingMessage: birthdaySetting.birthdayWishingMessage,
         };
+      } else {
+        result = {
+          birthdayWishingMessageWithAge:
+            "It's <userMention>'s birthday today (<age>)!",
+          birthdayWishingMessage: "It's <userMention>'s birthday today!",
+        };
       }
       return result;
     } else {
@@ -255,10 +261,10 @@ export default new (class Database {
         birthdayWishingMessages[setting.serverId] = {
           birthdayWishingMessageWithAge:
             setting.birthdayWishingMessageWithAge ??
-            "It's <userMention>'s birithday today (<age>)!",
+            "It's <userMention>'s birthday today (<age>)!",
           birthdayWishingMessage:
             setting.birthdayWishingMessage ??
-            "It's <userMention>'s birithday today!",
+            "It's <userMention>'s birthday today!",
         };
       }
       return birthdayWishingMessages;
