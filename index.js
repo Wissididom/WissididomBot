@@ -80,18 +80,6 @@ client.on(
   },
 );
 
-client.on(
-  Events.AutoModerationRuleUpdate,
-  async (oldAutoModerationRule, newAutoModerationRule) => {
-    await Logging.handleAutoModerationRuleUpdate(
-      client,
-      getDatabase(),
-      oldAutoModerationRule,
-      newAutoModerationRule,
-    );
-  },
-);
-
 client.on(Events.MessageDelete, async (message) => {
   if (!message.guild || !message.guildId) return;
   await Logging.handleMessageDelete(client, getDatabase(), message);
