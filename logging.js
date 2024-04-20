@@ -15,6 +15,7 @@ let exportObj = {
     "channelCreate",
     "channelDelete",
     "messageDelete",
+    "messageDeleteBulk",
     "memberKick",
     "memberBanAdd",
     "memberBanRemove",
@@ -231,6 +232,27 @@ let exportObj = {
             .setColor(0x0099ff)
             .setTitle("Message deleted")
             .setDescription(`Message deleted in <#${message.channel.id}>!`),
+        ],
+        allowed_mentions: { parse: [] },
+      });
+    }
+  },
+  handleMessageDeleteBulk: async (client, db, messages, channel) => {
+    // TODO: Actually cache the data on messageCreate so I can use the old message content or author id
+    let loggings = await db.getLoggings(
+      channel.guild.id ?? channel.guildId,
+      "messageDeleteBulk".toLowerCase(),
+    );
+    for (let logging of loggings) {
+      let targetChannel = await client.channels.fetch(logging.targetChannel);
+      targetChannel.send({
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x0099ff)
+            .setTitle("Messages bulk deleted")
+            .setDescription(
+              `Bulk deleted ${messages.size} messages in <#${channel.id}>!`,
+            ),
         ],
         allowed_mentions: { parse: [] },
       });

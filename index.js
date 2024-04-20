@@ -15,14 +15,12 @@ const client = new Client({
     GatewayIntentBits.AutoModerationConfiguration,
     GatewayIntentBits.AutoModerationExecution,
     GatewayIntentBits.DirectMessageReactions,
-    GatewayIntentBits.DirectMessageTyping, // Probably not needed and removed later
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildEmojisAndStickers,
     GatewayIntentBits.GuildIntegrations,
     GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildMessageTyping, // Probably not needed and removed later
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildModeration,
     GatewayIntentBits.GuildPresences,
@@ -97,6 +95,16 @@ client.on(
 client.on(Events.MessageDelete, async (message) => {
   if (!message.guild || !message.guildId) return;
   await Logging.handleMessageDelete(client, getDatabase(), message);
+});
+
+client.on(Events.MessageBulkDelete, async (messages, channel) => {
+  if (!channel.guild || !channel.guildId) return;
+  await Logging.handleMessageDeleteBulk(
+    client,
+    getDatabase(),
+    messages,
+    channel,
+  );
 });
 
 client.on(Events.ChannelUpdate, async (oldChannel, newChannel) => {
