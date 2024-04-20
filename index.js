@@ -8,20 +8,19 @@ import {
   getDatabase,
 } from "./commands.js";
 import { runWorkers } from "./background-worker/background-worker.js";
+import Logging from "./logging.js";
 
 const client = new Client({
   intents: [
     GatewayIntentBits.AutoModerationConfiguration,
     GatewayIntentBits.AutoModerationExecution,
     GatewayIntentBits.DirectMessageReactions,
-    GatewayIntentBits.DirectMessageTyping, // Probably not needed and removed later
     GatewayIntentBits.DirectMessages,
     GatewayIntentBits.GuildEmojisAndStickers,
     GatewayIntentBits.GuildIntegrations,
     GatewayIntentBits.GuildInvites,
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildMessageTyping, // Probably not needed and removed later
     GatewayIntentBits.GuildMessages,
     GatewayIntentBits.GuildModeration,
     GatewayIntentBits.GuildPresences,
@@ -60,6 +59,59 @@ client.on(Events.MessageCreate, async (msg) => {
 
 client.on(Events.InteractionCreate, async (interaction) => {
   await handleApplicationCommands(interaction);
+});
+
+client.on(Events.ApplicationCommandPermissionsUpdate, async (data) => {
+  await Logging.handleApplicationCommandPermissionsUpdate(
+    client,
+    getDatabase(),
+    data,
+  );
+});
+
+client.on(
+  Events.AutoModerationActionExecution,
+  async (autoModerationActionExecution) => {
+    await Logging.handleAutoModerationActionExecution(
+      client,
+      getDatabase(),
+      autoModerationActionExecution,
+    );
+  },
+);
+
+client.on(Events.MessageDelete, async (message) => {
+  if (!message.guild || !message.guildId) return;
+  await Logging.handleMessageDelete(client, getDatabase(), message);
+});
+
+client.on(Events.MessageBulkDelete, async (messages, channel) => {
+  if (!channel.guild || !channel.guildId) return;
+  await Logging.handleMessageDeleteBulk(
+    client,
+    getDatabase(),
+    messages,
+    channel,
+  );
+});
+
+client.on(Events.ChannelUpdate, async (oldChannel, newChannel) => {
+  if (oldChannel.isDMBased() || newChannel.isDMBased()) return;
+  await Logging.handleChannelUpdate(
+    client,
+    getDatabase(),
+    oldChannel,
+    newChannel,
+  );
+});
+
+client.on(Events.GuildAuditLogEntryCreate, async (auditLogEntry, guild) => {
+  await Logging.handleGuildAuditLogEntryCreate(
+    client,
+    getDatabase(),
+    auditLogEntry,
+    guild,
+  );
 });
 
 if (!process.env.DISCORD_TOKEN) {
