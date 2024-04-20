@@ -1,5 +1,9 @@
-import { ApplicationCommandPermissionType } from "discord.js";
-import { AuditLogEvent, AutoModerationActionType } from "discord.js";
+import {
+  ApplicationCommandPermissionType,
+  AuditLogEvent,
+  AutoModerationActionType,
+  EmbedBuilder,
+} from "discord.js";
 
 let exportObj = {
   availableLoggingEvents: [
@@ -67,7 +71,14 @@ let exportObj = {
     for (let logging of loggings) {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
       targetChannel.send({
-        content: `Command ${data.id} (of <@${data.applicationId}>) permissions were updated:\n\n${permissionLines.join("\n")}`,
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x0099ff)
+            .setTitle("Application Command Permissions Updated")
+            .setDescription(
+              `Command ${data.id} (of <@${data.applicationId}>) permissions were updated:\n\n${permissionLines.join("\n")}`,
+            ),
+        ],
         allowed_mentions: { parse: [] },
       });
     }
@@ -93,7 +104,12 @@ let exportObj = {
     for (let logging of loggings) {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
       targetChannel.send({
-        content: `AutoMod ${actionType}!`,
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x0099ff)
+            .setTitle("Auto Moderation Action Execution")
+            .setDescription(`AutoMod ${actionType}!`),
+        ],
         allowed_mentions: { parse: [] },
       });
     }
@@ -210,7 +226,12 @@ let exportObj = {
     for (let logging of loggings) {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
       targetChannel.send({
-        content: `Message deleted in <#${message.channel.id}>`,
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x0099ff)
+            .setTitle("Message deleted")
+            .setDescription(`Message deleted in <#${message.channel.id}>!`),
+        ],
         allowed_mentions: { parse: [] },
       });
     }
@@ -276,7 +297,14 @@ let exportObj = {
             logging.targetChannel,
           );
           await targetChannel.send({
-            content: `AutoMod Rule ${tempdata.target.name} (ID: ${targetId}) created by <@${executorId}> (${tempdata.executor?.username} - ${executorId})${tempdata.actions.length > 0 ? `, actions:\n${tempdata.actions.join("\n")}` : "!"}`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("AutoMod Rule created")
+                .setDescription(
+                  `AutoMod Rule ${tempdata.target.name} (ID: ${targetId}) created by <@${executorId}> (${tempdata.executor?.username} - ${executorId})${tempdata.actions.length > 0 ? `, actions:\n${tempdata.actions.join("\n")}` : "!"}`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -293,7 +321,14 @@ let exportObj = {
             logging.targetChannel,
           );
           await targetChannel.send({
-            content: `AutoMod Rule ${targetId} deleted by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("AutoMod Rule deleted")
+                .setDescription(
+                  `AutoMod Rule ${targetId} deleted by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -317,7 +352,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Channel <#${targetId}> (${tempdata.target?.name} - ${targetId}) created by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Channel created")
+                .setDescription(
+                  `Channel <#${targetId}> (${tempdata.target?.name} - ${targetId}) created by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -335,7 +377,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Channel <#${targetId}> (${tempdata.target?.name ?? "N/A"} - ${targetId}) deleted by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Channel deleted")
+                .setDescription(
+                  `Channel <#${targetId}> (${tempdata.target?.name ?? "N/A"} - ${targetId}) deleted by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -384,7 +433,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) banned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Member banned")
+                .setDescription(
+                  `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) banned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -402,7 +458,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) unbanned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Member unbanned")
+                .setDescription(
+                  `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) unbanned by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -420,7 +483,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) disconnected by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Member disconnected")
+                .setDescription(
+                  `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) disconnected by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -435,7 +505,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) kicked by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Member kicked")
+                .setDescription(
+                  `Member <@${targetId}> (${tempdata.target?.username ?? "N/A"} - ${targetId}) kicked by <@${executorId}> (${tempdata.executor?.username} - ${executorId})!`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -460,7 +537,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Message by <@${targetId}> in channel <#${extra.channel.id}> (${extra.channel.name} - ${extra.channel.id}) pinned by <@${executorId}>! [Jump to Message](https://discord.com/channels/${extra.channel.guildId}/${extra.channel.id}/${extra.messageId})`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Message pinned")
+                .setDescription(
+                  `Message by <@${targetId}> in channel <#${extra.channel.id}> (${extra.channel.name} - ${extra.channel.id}) pinned by <@${executorId}>! [Jump to Message](https://discord.com/channels/${extra.channel.guildId}/${extra.channel.id}/${extra.messageId})`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
@@ -472,7 +556,14 @@ let exportObj = {
             logging.targetChannel,
           );
           targetChannel.send({
-            content: `Message by <@${targetId}> in channel <#${extra.channel.id}> (${extra.channel.name} - ${extra.channel.id}) unpinned by <@${executorId}>! [Jump to Message](https://discord.com/channels/${extra.channel.guildId}/${extra.channel.id}/${extra.messageId})`,
+            embeds: [
+              new EmbedBuilder()
+                .setColor(0x0099ff)
+                .setTitle("Message unpinned")
+                .setDescription(
+                  `Message by <@${targetId}> in channel <#${extra.channel.id}> (${extra.channel.name} - ${extra.channel.id}) unpinned by <@${executorId}>! [Jump to Message](https://discord.com/channels/${extra.channel.guildId}/${extra.channel.id}/${extra.messageId})`,
+                ),
+            ],
             allowed_mentions: { parse: [] },
           });
         }
