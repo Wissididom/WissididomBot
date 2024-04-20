@@ -183,7 +183,6 @@ let exportObj = {
     }*/
   },
   handleChannelUpdate: async (client, db, oldChannel, newChannel) => {
-    // TODO: Test
     let loggings = await db.getLoggings(
       newChannel.guildId,
       "channelUpdate".toLowerCase(),
@@ -192,28 +191,38 @@ let exportObj = {
       let targetChannel = await client.channels.fetch(logging.targetChannel);
       let content = "";
       if (oldChannel.name != newChannel.name) {
-        content += `Name:\nBefore: ${oldChannel.name}\nAfter: ${newChannel.name}\n`;
+        content += `### Name:\n**Before:** \`\`${oldChannel.name}\`\`\n**After:** \`\`${newChannel.name}\`\`\n`;
       }
       if (oldChannel.bitrate != newChannel.bitrate) {
-        content += `Bitrate:\nBefore: \`${oldChannel.bitrate}\`\nAfter: \`${newChannel.bitrate}\`\n`;
+        content += `### Bitrate:\n**Before:** \`\`${oldChannel.bitrate}\`\`\n**After:** \`\`${newChannel.bitrate}\`\`\n`;
       }
       if (oldChannel.nsfw != newChannel.nsfw) {
-        content += `NSFW:\nBefore: \`${oldChannel.nsfw}\`\nAfter: \`${newChannel.nsfw}\`\n`;
+        content += `### NSFW:\n**Before:** ${oldChannel.nsfw ? "✅" : "❌"}\n**After:** ${newChannel.nsfw ? "✅" : "❌"}\n`;
       }
       if (oldChannel.parentId != newChannel.parentId) {
-        content += `Parent:\nBefore: <#${oldChannel.parentId}> (${oldChannel.parent.name} - ${oldChannel.parentId})\nAfter: <#${newChannel.parentId}> (${newChannel.parent.name} - ${newChannel.parentId})\n`;
+        content += `### Parent:\n**Before:** <#${oldChannel.parentId}> (${oldChannel.parent.name} - ${oldChannel.parentId})\n**After:** <#${newChannel.parentId}> (${newChannel.parent.name} - ${newChannel.parentId})\n`;
       }
       if (oldChannel.position != newChannel.position) {
-        content += `Position: ${oldChannel.position}> -> ${newChannel.position}\n`;
+        content += `### Position:\n\`\`${oldChannel.position}\`\` -> \`\`${newChannel.position}\`\`\n`;
       }
       if (oldChannel.topic != newChannel.topic) {
-        content += `Topic:\nBefore: \`${oldChannel.topic}\`\nAfter: ${newChannel.topic})\n`;
+        content += `### Topic:\n**Before:** \`\`${oldChannel.topic}\`\`\n**After:** \`\`${newChannel.topic}\`\`\n`;
       }
       if (oldChannel.type != newChannel.type) {
-        content += `Type:\nBefore: \`${oldChannel.type}\`\nAfter: ${newChannel.type})\n`;
+        content += `### Type:\n**Before:** \`\`${oldChannel.type}\`\`\n**After:** \`\`${newChannel.type}\`\`\n`;
+      }
+      if (oldChannel.rateLimitPerUser != newChannel.rateLimitPerUser) {
+        content += `### Slow-Mode:\n**Before:** \`\`${oldChannel.rateLimitPerUser} seconds\`\`\n**After:** \`\`${newChannel.rateLimitPerUser} seconds\`\`\n`;
       }
       targetChannel.send({
-        content: `Channel <#${oldChannel.id}> (${newChannel.name} - ${oldChannel.id}) updated:`,
+        embeds: [
+          new EmbedBuilder()
+            .setColor(0x0099ff)
+            .setTitle("Channel updated")
+            .setDescription(
+              `Channel <#${oldChannel.id}> (${newChannel.name} - ${oldChannel.id}) updated:\n${content.trim()}`,
+            ),
+        ],
         allowed_mentions: { parse: [] },
       });
     }
