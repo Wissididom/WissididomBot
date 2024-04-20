@@ -47,6 +47,14 @@ export default new (class Database {
           type: DataTypes.STRING,
           allowNull: true,
         },
+        birthdayWishingMessageWithAge: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
+        birthdayWishingMessage: {
+          type: DataTypes.STRING,
+          allowNull: true,
+        },
       },
       {
         sequelize: this.#db,
@@ -219,6 +227,62 @@ export default new (class Database {
       return await this.#Settings.create({
         serverId,
         birthdayWishingChannel: channelId,
+      });
+    }
+  }
+
+  async getBirthdayWishingMessage(serverId = null) {
+    if (serverId) {
+      let birthdaySetting = await this.#Settings.findOne({
+        where: {
+          serverId,
+        },
+      });
+      let result = null;
+      if (birthdaySetting) {
+        result = {
+          birthdayWishingMessageWithAge:
+            birthdaySetting.birthdayWishingMessageWithAge,
+          birthdayWishingMessage: birthdaySetting.birthdayWishingMessage,
+        };
+      }
+      return result;
+    } else {
+      let settings = await this.#Settings.findAll();
+      if (!settings) return null;
+      let birthdayWishingMessages = {};
+      for (let setting of settings) {
+        birthdayWishingMessages[setting.serverId] = {
+          birthdayWishingMessageWithAge:
+            setting.birthdayWishingMessageWithAge ??
+            "It's <userMention>'s birithday today (<age>)!",
+          birthdayWishingMessage:
+            setting.birthdayWishingMessage ??
+            "It's <userMention>'s birithday today!",
+        };
+      }
+      return birthdayWishingMessages;
+    }
+  }
+
+  async setBirthdayWishingMessage(serverId, messageWithAge, message) {
+    let oldBirthdayWishingMessage =
+      await this.getBirthdayWishingMessage(serverId);
+    if (oldBirthdayWishingMessage) {
+      return await this.#Settings.update(
+        {
+          birthdayWishingMessageWithAge: messageWithAge,
+          birthdayWishingMessage: message,
+        },
+        {
+          where: { serverId },
+        },
+      );
+    } else {
+      return await this.#Settings.create({
+        serverId,
+        birthdayWishingMessageWithAge: messageWithAge,
+        birthdayWishingMessage: message,
       });
     }
   }
