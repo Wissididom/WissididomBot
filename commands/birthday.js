@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, User } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder, User } from "discord.js";
 import { getArgsFromMessage } from "../util.js";
 
 let exportObj = {
@@ -40,7 +40,7 @@ let exportObj = {
       let birthday = await db.getBirthday(msg.guildId, member);
       if (birthday) {
         await msg.reply({
-          content: `<@${msg.author.id}>'s birthday is \`${birthday.year}-${birthday.month}-${birthday.day}\` (${birthday.timezone})!`,
+          content: `<@${msg.author.id}>'s birthday is \`${birthday.year}-${birthday.month}-${birthday.day}\` (\`${birthday.timezone}\`)!`,
         });
       } else {
         await msg.reply({
@@ -51,6 +51,7 @@ let exportObj = {
   },
   runInteraction: async (interaction, db) => {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
+      await interaction.deferReply();
       let member = interaction.options.getUser("member")?.id;
       if (!member) {
         member = interaction.user.id;
@@ -60,14 +61,24 @@ let exportObj = {
         member instanceof User ? member.id : member,
       );
       if (birthday) {
-        await interaction.reply({
-          content: `<@${member}>'s birthday is \`${birthday.year}-${birthday.month}-${birthday.day}\` (${birthday.timezone})!`,
-          allowed_mentions: { parse: [] }, // Prevent pings of other people
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Their birthday")
+              .setDescription(
+                `<@${member}>'s birthday is \`${birthday.year}-${birthday.month}-${birthday.day}\` (\`${birthday.timezone}\`)!`,
+              ),
+          ],
         });
       } else {
-        await interaction.reply({
-          content: `Failed to get <@${member}>'s birthday!`,
-          allowed_mentions: { parse: [] }, // Prevent pings of other people
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Their birthday")
+              .setDescription(`Failed to get <@${member}>'s birthday!`),
+          ],
         });
       }
     }

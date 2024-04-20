@@ -245,7 +245,24 @@ export default new (class Database {
   }
 
   async setBirthday(serverId, userId, year, month, day, timezone) {
-    return await this.#Birthdays.upsert({
+    let oldBirthday = await this.getBirthday(serverId, userId);
+    if (oldBirthday) {
+      return await this.#Birthdays.update(
+        {
+          year,
+          month,
+          day,
+          timezone,
+        },
+        {
+          where: {
+            serverId,
+            userId,
+          },
+        },
+      );
+    }
+    return await this.#Birthdays.create({
       serverId,
       userId,
       year,
