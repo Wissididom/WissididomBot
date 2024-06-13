@@ -14,12 +14,12 @@
   "license": "MIT",
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.37",
-    "discord.js": "^14.14.1",
+    "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
     "luxon": "^3.4.4",
-    "mariadb": "^3.3.0"
+    "mariadb": "^3.3.1"
   },
   "devDependencies": {
-    "prettier": "^3.2.5"
+    "prettier": "^3.3.2"
   }
 }
