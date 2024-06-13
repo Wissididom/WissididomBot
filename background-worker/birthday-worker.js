@@ -20,6 +20,7 @@ let exportObj = {
   runInterval: async (intervalObj, client, db) => {
     let birthdays = await db.getBirthdays();
     let birthdayWishingChannel = await db.getBirthdayWishingChannel();
+    let birthdayWishingMessage = await db.getBirthdayWishingMessage();
     for (let birthday of birthdays) {
       let currentDate = DateTime.now().setZone(birthday.timezone);
       if (currentDate.hour != 0) continue; // Only run on hour 0 to prevent duplicates
@@ -27,7 +28,7 @@ let exportObj = {
         {
           day: birthday.day,
           month: birthday.month,
-          year: birthday.year ?? currentDate.year,
+          year: birthday.year,
           hour: 0,
           minute: 0,
           second: 0,
@@ -55,14 +56,21 @@ let exportObj = {
                 client,
                 birthdayWishingChannel[birthday.serverId],
                 birthday.userId,
-                `It's <@${birthday.userId}>'s birthday today (${age})!`,
+                birthdayWishingMessage[
+                  birthday.serverId
+                ].birthdayWishingMessageWithAge
+                  .replace("<userId>", birthday.userId)
+                  .replace("<userMention>", `<@${birthday.userId}>`)
+                  .replace("<age>", age),
               );
             } else {
               await sendMessage(
                 client,
                 birthdayWishingChannel[birthday.serverId],
                 birthday.userId,
-                `It's <@${birthday.userId}>'s birthday today!`,
+                birthdayWishingMessage[birthday.serverId].birthdayWishingMessage
+                  .replace("<userId>", birthday.userId)
+                  .replace("<userMention>", `<@${birthday.userId}>`),
               );
             }
             continue; // Skip further execution
@@ -78,14 +86,21 @@ let exportObj = {
               client,
               birthdayWishingChannel[birthday.serverId],
               birthday.userId,
-              `It's <@${birthday.userId}>'s birthday today (${age})!`,
+              birthdayWishingMessage[
+                birthday.serverId
+              ].birthdayWishingMessageWithAge
+                .replace("<userId>", birthday.userId)
+                .replace("<userMention>", `<@${birthday.userId}>`)
+                .replace("<age>", age),
             );
           } else {
             await sendMessage(
               client,
               birthdayWishingChannel[birthday.serverId],
               birthday.userId,
-              `It's <@${birthday.userId}>'s birthday today!`,
+              birthdayWishingMessage[birthday.serverId].birthdayWishingMessage
+                .replace("<userId>", birthday.userId)
+                .replace("<userMention>", `<@${birthday.userId}>`),
             );
           }
         }

@@ -39,20 +39,29 @@ const client = new Client({
   ],
 });
 
-client.on(Events.ClientReady, () => {
+client.on(Events.ClientReady, async () => {
   console.log(`Logged in as ${client.user?.tag}!`);
   let db = getDatabase();
-  db.initDb();
-  runWorkers(client, db);
+  await db.initDb();
+  await runWorkers(client, db);
+});
+
+client.on(Events.GuildCreate, async (guild) => {
+  let db = getDatabase();
+  await db.setBirthdayWishingMessage(
+    guild.id,
+    "It's <userMention>'s birthday today (<age>)!",
+    "It's <userMention>'s birthday today!",
+  );
 });
 
 client.on(Events.MessageCreate, async (msg) => {
   if (msg.author.bot) {
-    await moderateBot(msg);
+    await moderateBot(getDatabase(), msg);
   } else {
-    let moderated = await moderateUser(msg);
+    let moderated = await moderateUser(getDatabase(), msg);
     if (!moderated) {
-      await handleMessageCommands(msg);
+      await handleMessageCommands(getDatabase(), msg);
     }
   }
 });
