@@ -47,6 +47,14 @@ export default new (class Database {
           type: DataTypes.STRING,
           allowNull: true,
         },
+        birthdayWishingMessageWithAge: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
+        birthdayWishingMessage: {
+          type: DataTypes.STRING,
+          allowNull: false,
+        },
       },
       {
         sequelize: this.#db,
@@ -223,6 +231,68 @@ export default new (class Database {
     }
   }
 
+  async getBirthdayWishingMessage(serverId = null) {
+    if (serverId) {
+      let birthdaySetting = await this.#Settings.findOne({
+        where: {
+          serverId,
+        },
+      });
+      let result = null;
+      if (birthdaySetting) {
+        result = {
+          birthdayWishingMessageWithAge:
+            birthdaySetting.birthdayWishingMessageWithAge,
+          birthdayWishingMessage: birthdaySetting.birthdayWishingMessage,
+        };
+      } else {
+        result = {
+          birthdayWishingMessageWithAge:
+            "It's <userMention>'s birthday today (<age>)!",
+          birthdayWishingMessage: "It's <userMention>'s birthday today!",
+        };
+      }
+      return result;
+    } else {
+      let settings = await this.#Settings.findAll();
+      if (!settings) return null;
+      let birthdayWishingMessages = {};
+      for (let setting of settings) {
+        birthdayWishingMessages[setting.serverId] = {
+          birthdayWishingMessageWithAge:
+            setting.birthdayWishingMessageWithAge ??
+            "It's <userMention>'s birthday today (<age>)!",
+          birthdayWishingMessage:
+            setting.birthdayWishingMessage ??
+            "It's <userMention>'s birthday today!",
+        };
+      }
+      return birthdayWishingMessages;
+    }
+  }
+
+  async setBirthdayWishingMessage(serverId, messageWithAge, message) {
+    let oldBirthdayWishingMessage =
+      await this.getBirthdayWishingMessage(serverId);
+    if (oldBirthdayWishingMessage) {
+      return await this.#Settings.update(
+        {
+          birthdayWishingMessageWithAge: messageWithAge,
+          birthdayWishingMessage: message,
+        },
+        {
+          where: { serverId },
+        },
+      );
+    } else {
+      return await this.#Settings.create({
+        serverId,
+        birthdayWishingMessageWithAge: messageWithAge,
+        birthdayWishingMessage: message,
+      });
+    }
+  }
+
   async getBirthday(serverId, userId) {
     return await this.#Birthdays.findOne({
       where: {
@@ -245,7 +315,24 @@ export default new (class Database {
   }
 
   async setBirthday(serverId, userId, year, month, day, timezone) {
-    return await this.#Birthdays.upsert({
+    let oldBirthday = await this.getBirthday(serverId, userId);
+    if (oldBirthday) {
+      return await this.#Birthdays.update(
+        {
+          year,
+          month,
+          day,
+          timezone,
+        },
+        {
+          where: {
+            serverId,
+            userId,
+          },
+        },
+      );
+    }
+    return await this.#Birthdays.create({
       serverId,
       userId,
       year,

@@ -1,13 +1,13 @@
 import BirthdayWorker from "./birthday-worker.js";
 
-export function runWorkers(client, db) {
+export async function runWorkers(client, db) {
   let workerNames = ["birthday"];
   for (let workerName of workerNames) {
     runWorker(workerName, client, db);
   }
 }
 
-export function runWorker(name, client, db) {
+export async function runWorker(name, client, db) {
   let worker = getWorker(name);
   if (worker) {
     let interval = setInterval(async () => {
