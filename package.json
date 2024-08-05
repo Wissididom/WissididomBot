@@ -16,7 +16,7 @@
     "@sequelize/core": "^7.0.0-alpha.37",
     "discord.js": "^14.15.3",
     "dotenv": "^16.4.5",
-    "luxon": "^3.4.4",
+    "luxon": "^3.5.0",
     "mariadb": "^3.3.1"
   },
   "devDependencies": {
