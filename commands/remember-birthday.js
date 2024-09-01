@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from "discord.js";
+import { EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { getArgsFromMessage } from "../util.js";
 
 const SUPPORTED_TIMEZONES = Intl.supportedValuesOf("timeZone");
@@ -34,8 +34,14 @@ let exportObj = {
       if (!timezone) timezone = await db.getTimezone(msg.guildId);
       if (!birthdate) {
         await msg.reply({
-          content:
-            "You must specify a birthday for this command! Format: `YYYY-MM-DD` (year optional)",
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Failed to set birthday")
+              .setDescription(
+                `You must specify a birthday! Format: \`YYYY-MM-DD\` (year optional)`,
+              ),
+          ],
         });
         return;
       }
@@ -43,8 +49,14 @@ let exportObj = {
       let dateMatch = dateRegex.exec(birthdate);
       if (!dateMatch) {
         await msg.reply({
-          content:
-            "You must specify a valid birthday for this command! Format: `YYYY-MM-DD` (year optional)",
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Failed to set birthday")
+              .setDescription(
+                "You must specify a valid birthday for this command! Format: `YYYY-MM-DD` (year optional)",
+              ),
+          ],
         });
         return;
       }
@@ -61,32 +73,60 @@ let exportObj = {
       );
       if (result) {
         await msg.reply({
-          content: `Successfully saved <@${msg.author.id}>'s birthday of \`${birthdate}\`!`,
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Saved birthday")
+              .setDescription(
+                `Successfully saved <@${interaction.user.id}>'s birthday of \`${birthdate}\` (\`${timezone}\`)!`,
+              ),
+          ],
         });
       } else {
         await msg.reply({
-          content: `Failed to save <@${msg.author.id}>'s birthday of \`${birthdate}\`!`,
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Failed to set birthday")
+              .setDescription(
+                `Failed to save <@${interaction.user.id}>'s birthday of \`${birthdate}\` (\`${timezone}\`)!`,
+              ),
+          ],
         });
       }
     }
   },
   runInteraction: async (interaction, db) => {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
+      await interaction.deferReply();
       let birthdate = interaction.options.getString("date");
       let timezone = interaction.options.getString("timezone");
       if (!timezone) timezone = await db.getTimezone(interaction.guildId);
       if (!birthdate) {
-        await interaction.reply({
-          content: `You must specify a birthday! Format: \`YYYY-MM-DD\` (year optional)`,
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Failed to set birthday")
+              .setDescription(
+                `You must specify a birthday! Format: \`YYYY-MM-DD\` (year optional)`,
+              ),
+          ],
         });
         return;
       }
       let dateRegex = /(?:(\d{4})-)?(\d{1,2})-(\d{1,2})/g;
       let dateMatch = dateRegex.exec(birthdate);
       if (!dateMatch) {
-        await msg.reply({
-          content:
-            "You must specify a valid birthday for this command! Format: `YYYY-MM-DD` (year optional)",
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Failed to set birthday")
+              .setDescription(
+                "You must specify a valid birthday for this command! Format: `YYYY-MM-DD` (year optional)",
+              ),
+          ],
         });
         return;
       }
@@ -102,12 +142,26 @@ let exportObj = {
         timezone,
       );
       if (result) {
-        await interaction.reply({
-          content: `Successfully saved <@${interaction.user.id}>'s birthday of \`${birthdate}\`!`,
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Saved birthday")
+              .setDescription(
+                `Successfully saved <@${interaction.user.id}>'s birthday of \`${birthdate}\` (\`${timezone}\`)!`,
+              ),
+          ],
         });
       } else {
-        await interaction.reply({
-          content: `Failed to save <@${interaction.user.id}>'s birthday of \`${birthdate}\`!`,
+        await interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setColor(0x0099ff)
+              .setTitle("Failed to set birthday")
+              .setDescription(
+                `Failed to save <@${interaction.user.id}>'s birthday of \`${birthdate}\` (\`${timezone}\`)!`,
+              ),
+          ],
         });
       }
     }
