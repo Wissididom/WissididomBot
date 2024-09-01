@@ -18,7 +18,6 @@ let exportObj = {
     "background worker that runs every hour to send birthday wishing messages",
   interval: 60 * 60 * 1000,
   runInterval: async (intervalObj, client, db) => {
-    console.log("birthday ran");
     let birthdays = await db.getBirthdays();
     let birthdayWishingChannel = await db.getBirthdayWishingChannel();
     let birthdayWishingMessage = await db.getBirthdayWishingMessage();
