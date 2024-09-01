@@ -16,7 +16,7 @@ let exportObj = {
   name: "birthday",
   description:
     "background worker that runs every hour to send birthday wishing messages",
-  interval: /*60 * */ 60 * 1000,
+  interval: 60 * 60 * 1000,
   runInterval: async (intervalObj, client, db) => {
     console.log("birthday ran");
     let birthdays = await db.getBirthdays();
@@ -80,7 +80,8 @@ let exportObj = {
       }
       if (
         birthday.day == currentDate.day &&
-        birthday.month == currentDate.month
+        birthday.month == currentDate.month &&
+        currentDate.hour != 0
       ) {
         // it's their birthday...
         if (setAge) {
