@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, User } from "discord.js";
+import { MessageFlags, SlashCommandBuilder, User } from "discord.js";
 import { getArgsFromMessage } from "../util.js";
 import Logging from "../logging.js";
 
@@ -197,7 +197,7 @@ let exportObj = {
   },
   runInteraction: async (interaction, db) => {
     if (interaction.guild?.available && interaction.isChatInputCommand()) {
-      await interaction.deferReply({ ephemeral: true });
+      await interaction.deferReply({ flags: MessageFlags.Ephemeral });
       let action = interaction.options.getSubcommand();
       let type = interaction.options.getString("type");
       let source = interaction.options.getChannel("source");
