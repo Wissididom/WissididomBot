@@ -13,7 +13,7 @@
   "author": "Wissididom",
   "license": "MIT",
   "dependencies": {
-    "@sequelize/core": "^7.0.0-alpha.43",
+    "@sequelize/core": "^7.0.0-alpha.44",
     "discord.js": "^14.17.3",
     "dotenv": "^16.4.7",
     "luxon": "^3.5.0",
