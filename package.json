@@ -20,6 +20,6 @@
     "mariadb": "^3.4.0"
   },
   "devDependencies": {
-    "prettier": "^3.4.2"
+    "prettier": "^3.5.0"
   }
 }
