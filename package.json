@@ -17,7 +17,7 @@
     "discord.js": "^14.18.0",
     "dotenv": "^16.4.7",
     "luxon": "^3.6.1",
-    "mariadb": "^3.4.0"
+    "mariadb": "^3.4.1"
   },
   "devDependencies": {
     "prettier": "^3.5.3"
